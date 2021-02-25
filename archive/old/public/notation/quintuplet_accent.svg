@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg295"
+   viewBox="0 0 8.4567999 6.8638093"
+   height="12.061747mm"
+   width="14.861103mm"
+   version="1.2">
+  <metadata
+     id="metadata301">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs299" />
+  <style
+     id="style235"
+     text="style/css"><![CDATA[
+tspan { white-space: pre; }
+]]></style>
+  <!-- Page: 1/1 -->
+  <text
+     y="-1.0046909"
+     x="-1.7521"
+     id="text239"
+     fill="currentColor"
+     text-anchor="start"
+     font-size="2.2001px"
+     font-family="serif"><tspan
+       id="tspan237" /></text>
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a243"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:29:30"
+     style="color:inherit">
+    <path
+       id="path241"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,9.5027,8.9728)" />
+  </a>
+  <rect
+     id="rect245"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="1.9328091"
+     x="3.2342" />
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a249"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:33:34"
+     style="color:inherit">
+    <path
+       id="path247"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,11.1069,8.9728)" />
+  </a>
+  <rect
+     id="rect251"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="1.9328091"
+     x="4.8383999" />
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a255"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:37:38"
+     style="color:inherit">
+    <path
+       id="path253"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,12.7111,8.9728)" />
+  </a>
+  <rect
+     id="rect257"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="1.9328091"
+     x="6.4425998" />
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a261"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:41:42"
+     style="color:inherit">
+    <path
+       id="path259"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,14.3153,8.9728)" />
+  </a>
+  <polygon
+     id="polygon263"
+     points="0.04,0.2 0.04,-0.2 6.7147,-0.2 6.7147,0.2 "
+     stroke="currentColor"
+     fill="currentColor"
+     stroke-width="0.08"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     transform="translate(1.4221,1.9328091)" />
+  <polygon
+     id="polygon265"
+     points="0.04,0.2 0.04,-0.2 6.7147,-0.2 6.7147,0.2 "
+     stroke="currentColor"
+     fill="currentColor"
+     stroke-width="0.08"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     transform="translate(1.4221,2.7428091)" />
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a271"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:8:9"
+     style="color:inherit">
+    <text
+       id="text269"
+       fill="currentColor"
+       text-anchor="start"
+       font-size="1.7461px"
+       font-style="italic"
+       font-family="serif"
+       transform="translate(11.7983,5.0061)"><tspan
+         id="tspan267">5</tspan></text>
+  </a>
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a281"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:8:9"
+     style="color:inherit">
+    <line
+       id="line273"
+       y2="0.69999999"
+       x2="6.9547"
+       y1="0"
+       x1="6.9547"
+       stroke="currentColor"
+       stroke-width="0.16"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       transform="translate(8.8648,4.4428)" />
+    <line
+       id="line275"
+       y2="0.69999999"
+       x2="-0.2"
+       y1="0"
+       x1="-0.2"
+       stroke="currentColor"
+       stroke-width="0.16"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       transform="translate(8.8648,4.4428)" />
+    <line
+       id="line277"
+       y2="0"
+       x2="4.4211998"
+       y1="0"
+       x1="6.9547"
+       stroke="currentColor"
+       stroke-width="0.16"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       transform="translate(8.8648,4.4428)" />
+    <line
+       id="line279"
+       y2="0"
+       x2="2.5335"
+       y1="0"
+       x1="-0.2"
+       stroke="currentColor"
+       stroke-width="0.16"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       transform="translate(8.8648,4.4428)" />
+  </a>
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a285"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:21:22"
+     style="color:inherit">
+    <path
+       id="path283"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,7.6906,8.9728)" />
+  </a>
+  <a
+     transform="translate(-7.4427,-3.8499909)"
+     id="a289"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quintuplet_accent.ly:37:26:27"
+     style="color:inherit">
+    <path
+       id="path287"
+       fill="currentColor"
+       d="m -211,88 c -8,2 -14,9 -14,18 0,10 9,19 19,19 2,0 3,-1 4,-1 L 206,19 c 13,0 19,-6 19,-19 0,-13 -6,-19 -19,-19 l -408,-105 c -1,0 -2,-1 -4,-1 -10,0 -19,9 -19,19 0,9 6,16 14,18 L 40,-23 180,0 40,23 Z"
+       transform="matrix(0.004,0,0,-0.004,8.3427,10.2138)" />
+  </a>
+  <rect
+     id="rect291"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="1.9328091"
+     x="1.4220999" />
+  <rect
+     id="rect293"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="1.9328091"
+     x="8.0467997" />
+</svg>

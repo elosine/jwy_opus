@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg704"
+   viewBox="0 0 3.9641 4.981"
+   height="8.7530928mm"
+   width="6.9660983mm"
+   version="1.2">
+  <metadata
+     id="metadata710">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs708" />
+  <style
+     id="style680"
+     text="style/css"><![CDATA[
+tspan { white-space: pre; }
+]]></style>
+  <!-- Page: 1/1 -->
+  <text
+     y="-1"
+     x="-1.988"
+     id="text684"
+     fill="currentColor"
+     text-anchor="start"
+     font-size="2.2001px"
+     font-family="serif"><tspan
+       id="tspan682" /></text>
+  <a
+     transform="translate(-7.6786,-3.8453)"
+     id="a688"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/eight_accent_2ndPartial.ly:37:6:7"
+     style="color:inherit">
+    <polygon
+       id="polygon686"
+       points="0.04,0.2 0.04,-0.2 3.2292,-0.2 3.2292,0.2 "
+       stroke="currentColor"
+       fill="currentColor"
+       stroke-width="0.08"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       transform="translate(8.1256,4.0853)" />
+  </a>
+  <rect
+     id="rect690"
+     fill="currentColor"
+     ry="0.039999999"
+     height="2.8139"
+     width="0.13"
+     y="0.23999999"
+     x="3.5862" />
+  <a
+     transform="translate(-7.6786,-3.8453)"
+     id="a694"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/eight_accent_2ndPartial.ly:37:15:16"
+     style="color:inherit">
+    <path
+       id="path692"
+       fill="currentColor"
+       d="m -211,88 c -8,2 -14,9 -14,18 0,10 9,19 19,19 2,0 3,-1 4,-1 L 206,19 c 13,0 19,-6 19,-19 0,-13 -6,-19 -19,-19 l -408,-105 c -1,0 -2,-1 -4,-1 -10,0 -19,9 -19,19 0,9 6,16 14,18 L 40,-23 180,0 40,23 Z"
+       transform="matrix(0.004,0,0,-0.004,10.7427,8.3263)" />
+  </a>
+  <a
+     transform="translate(-7.6786,-3.8453)"
+     id="a698"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/eight_accent_2ndPartial.ly:37:11:12"
+     style="color:inherit">
+    <path
+       id="path696"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,10.0906,7.0853)" />
+  </a>
+  <a
+     transform="translate(-7.6786,-3.8453)"
+     id="a702"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/eight_accent_2ndPartial.ly:37:8:9"
+     style="color:inherit">
+    <path
+       id="path700"
+       fill="currentColor"
+       d="M 72,-250 189,76 C 155,64 120,54 84,54 38,54 -3,87 -3,133 c 0,40 33,72 73,72 25,0 48,-15 56,-39 10,-28 6,-59 35,-59 16,0 54,48 61,63 6,12 23,12 28,0 L 127,-250 c -8,-7 -17,-10 -27,-10 -10,0 -20,3 -28,10 z"
+       transform="matrix(0.004,0,0,-0.004,7.6906,7.0853)" />
+  </a>
+</svg>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg141"
+   viewBox="0 0 6.5726002 5.1709999"
+   height="9.0869789mm"
+   width="11.550006mm"
+   version="1.2">
+  <metadata
+     id="metadata147">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs145" />
+  <style
+     id="style103"
+     text="style/css"><![CDATA[
+tspan { white-space: pre; }
+]]></style>
+  <!-- Page: 1/1 -->
+  <text
+     y="-1"
+     x="-1.7521"
+     id="text107"
+     fill="currentColor"
+     text-anchor="start"
+     font-size="2.2001px"
+     font-family="serif"><tspan
+       id="tspan105" /></text>
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a111"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/new_notation_workbook/pulseCycle003/public/notation/quadruplet_accent.ly:37:19:20"
+     style="color:inherit">
+    <path
+       id="path109"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,11.1069,7.2753)" />
+  </a>
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a115"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/new_notation_workbook/pulseCycle003/public/notation/quadruplet_accent.ly:37:15:16"
+     style="color:inherit">
+    <path
+       id="path113"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,9.5027,7.2753)" />
+  </a>
+  <rect
+     id="rect117"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="0.23999994"
+     x="3.2342" />
+  <rect
+     id="rect119"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="0.23999994"
+     x="4.8383999" />
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a123"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/new_notation_workbook/pulseCycle003/public/notation/quadruplet_accent.ly:37:23:24"
+     style="color:inherit">
+    <path
+       id="path121"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,12.7111,7.2753)" />
+  </a>
+  <rect
+     id="rect125"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="0.23999994"
+     x="6.4425998" />
+  <polygon
+     id="polygon127"
+     points="0.04,0.2 0.04,-0.2 5.1105,-0.2 5.1105,0.2 "
+     stroke="currentColor"
+     fill="currentColor"
+     stroke-width="0.08"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     transform="translate(1.4221,0.24)" />
+  <polygon
+     id="polygon129"
+     points="0.04,0.2 0.04,-0.2 5.1105,-0.2 5.1105,0.2 "
+     stroke="currentColor"
+     fill="currentColor"
+     stroke-width="0.08"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     transform="translate(1.4221,1.05)" />
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a133"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/new_notation_workbook/pulseCycle003/public/notation/quadruplet_accent.ly:37:7:8"
+     style="color:inherit">
+    <path
+       id="path131"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,7.6906,7.2753)" />
+  </a>
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a137"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/new_notation_workbook/pulseCycle003/public/notation/quadruplet_accent.ly:37:12:13"
+     style="color:inherit">
+    <path
+       id="path135"
+       fill="currentColor"
+       d="m -211,88 c -8,2 -14,9 -14,18 0,10 9,19 19,19 2,0 3,-1 4,-1 L 206,19 c 13,0 19,-6 19,-19 0,-13 -6,-19 -19,-19 l -408,-105 c -1,0 -2,-1 -4,-1 -10,0 -19,9 -19,19 0,9 6,16 14,18 L 40,-23 180,0 40,23 Z"
+       transform="matrix(0.004,0,0,-0.004,8.3427,8.5163)" />
+  </a>
+  <rect
+     id="rect139"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.0039001"
+     width="0.13"
+     y="0.23999994"
+     x="1.4220999" />
+</svg>

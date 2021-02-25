@@ -1,0 +1,1 @@
+-1;/notation/quarter_accent_12_35.svg,12,35;-1;/notation/quarter_accent_12_35.svg,12,35;-1;-1;-1;/notation/triplet_accent_1st_partial_45_45.svg,44,44;-1;/notation/eight_accent_2ndPartial_27_34.svg,26,33;/notation/quintuplet_accent_76_46.svg,76,46;-1

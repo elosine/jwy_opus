@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg398"
+   viewBox="0 0 6.5603 8.4342819"
+   height="14.821532mm"
+   width="11.528391mm"
+   version="1.2">
+  <metadata
+     id="metadata404">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs402" />
+  <style
+     id="style364"
+     text="style/css"><![CDATA[
+tspan { white-space: pre; }
+]]></style>
+  <!-- Page: 1/1 -->
+  <text
+     y="-1.0150183"
+     x="-1.6803"
+     id="text368"
+     fill="currentColor"
+     text-anchor="start"
+     font-size="2.2001px"
+     font-family="serif"><tspan
+       id="tspan366" /></text>
+  <path
+     style="stroke-width:0.0036"
+     id="path370"
+     fill="currentColor"
+     d="m 3.4937,6.2563816 c 0.2052,0 0.3996,0.1044 0.3996,0.3312 0,0.2556 -0.1944,0.432 -0.3636,0.5328 -0.126,0.0756 -0.2664,0.1224 -0.4104,0.1224 -0.2052,0 -0.3996,-0.1044 -0.3996,-0.3312 0,-0.2556 0.1944,-0.432 0.3636,-0.5328 0.126,-0.0756 0.2664,-0.1224 0.4104,-0.1224 z" />
+  <path
+     style="stroke-width:0.0036"
+     id="path372"
+     fill="currentColor"
+     d="m 5.8937,6.2563816 c 0.2052,0 0.3996,0.1044 0.3996,0.3312 0,0.2556 -0.1944,0.432 -0.3636,0.5328 -0.126,0.0756 -0.2664,0.1224 -0.4104,0.1224 -0.2052,0 -0.3996,-0.1044 -0.3996,-0.3312 0,-0.2556 0.1944,-0.432 0.3636,-0.5328 0.126,-0.0756 0.2664,-0.1224 0.4104,-0.1224 z" />
+  <rect
+     id="rect374"
+     fill="currentColor"
+     ry="0.039999999"
+     height="4.6501999"
+     width="0.13"
+     y="1.9395816"
+     x="6.1503" />
+  <polygon
+     id="polygon376"
+     points="0.04,0.2 0.04,-0.2 4.89,-0.2 4.89,0.2 "
+     stroke="currentColor"
+     fill="currentColor"
+     stroke-width="0.08"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     transform="translate(1.3503,1.9395816)" />
+  <text
+     y="1.1799816"
+     x="3.3715"
+     id="text380"
+     fill="currentColor"
+     text-anchor="start"
+     font-size="1.7461px"
+     font-style="italic"
+     font-family="serif"><tspan
+       id="tspan378">3</tspan></text>
+  <line
+     id="line382"
+     y2="1.2995816"
+     x2="6.4802999"
+     y1="0.5995816"
+     x1="6.4802999"
+     stroke="currentColor"
+     stroke-width="0.16"
+     stroke-linecap="round"
+     stroke-linejoin="round" />
+  <line
+     id="line384"
+     y2="1.2995816"
+     x2="1.1503"
+     y1="0.5995816"
+     x1="1.1503"
+     stroke="currentColor"
+     stroke-width="0.16"
+     stroke-linecap="round"
+     stroke-linejoin="round" />
+  <line
+     id="line386"
+     y2="0.5995816"
+     x2="4.8592"
+     y1="0.5995816"
+     x1="6.4802999"
+     stroke="currentColor"
+     stroke-width="0.16"
+     stroke-linecap="round"
+     stroke-linejoin="round" />
+  <line
+     id="line388"
+     y2="0.5995816"
+     x2="2.9714"
+     y1="0.5995816"
+     x1="1.1503"
+     stroke="currentColor"
+     stroke-width="0.16"
+     stroke-linecap="round"
+     stroke-linejoin="round" />
+  <rect
+     id="rect390"
+     fill="currentColor"
+     ry="0.039999999"
+     height="4.6501999"
+     width="0.13"
+     y="1.9395816"
+     x="3.7502999" />
+  <path
+     style="stroke-width:0.0036"
+     id="path392"
+     fill="currentColor"
+     d="m 1.0937,6.2563816 c 0.2052,0 0.3996,0.1044 0.3996,0.3312 0,0.2556 -0.1944,0.432 -0.3636,0.5328 -0.126,0.0756 -0.2664,0.1224 -0.4104,0.1224 -0.2052,0 -0.3996,-0.1044 -0.3996,-0.3312 0,-0.2556 0.1944,-0.432 0.3636,-0.5328 0.126,-0.0756 0.2664,-0.1224 0.4104,-0.1224 z" />
+  <path
+     style="stroke-width:0.004"
+     id="path394"
+     fill="currentColor"
+     d="m 0.056,7.5822816 c -0.032,-0.008 -0.056,-0.036 -0.056,-0.072 0,-0.04 0.036,-0.076 0.076,-0.076 0.008,0 0.012,0.004 0.016,0.004 l 1.632,0.42 c 0.052,0 0.076,0.024 0.076,0.076 0,0.052 -0.024,0.076 -0.076,0.076 l -1.632,0.42 c -0.004,0 -0.008,0.004 -0.016,0.004 -0.04,0 -0.076,-0.036 -0.076,-0.076 0,-0.036 0.024,-0.064 0.056,-0.072 l 1.004,-0.26 0.56,-0.092 -0.56,-0.092 z" />
+  <rect
+     id="rect396"
+     fill="currentColor"
+     ry="0.039999999"
+     height="4.6501999"
+     width="0.13"
+     y="1.9395816"
+     x="1.3503" />
+</svg>
