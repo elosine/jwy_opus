@@ -428,6 +428,14 @@ function constrain(num, min, max){
   const parsed = parseInt(num)
   return Math.min(Math.max(parsed, MIN), MAX)
 }
+// GET AND PARCE VALUES FROM URL --------------------------------------
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
 
 
 

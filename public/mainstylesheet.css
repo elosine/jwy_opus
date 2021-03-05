@@ -5,6 +5,30 @@ body {
   padding: 0;
 }
 
+/* Label Style */
+.lbl {
+  letter-spacing: 1px;
+  padding: 4px 4px;
+  margin: 4px 4px;
+  border: none;
+  font-family: 'Lato';
+  font-size: 11px;
+  color: inherit;
+  background: none;
+  display: inline-block;
+  font-variant: small-caps;
+  outline: none;
+  position: absolute;
+}
+.lbl-1 {
+  background: #24b662;
+  color: white;
+}
+.lbl-2 {
+  background: #cb4e4e;
+  color: white;
+}
+
 /* General button style */
 .btn {
   letter-spacing: 1px;

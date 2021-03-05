@@ -1,73 +1,51 @@
 var express = require('express');
 var app = express();
 var path = require('path');
+var timesyncServer = require('timesync/server');
 var server = require('http').createServer(app);
-app.use(express.static(path.join(__dirname, '/public')));
-mainServer_io = require('socket.io').listen(server);
+io = require('socket.io').listen(server);
 
-//Assign Initial Port for Server Splash Page
 const PORT = process.env.PORT || 5000
-server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
-// var timesyncServer = require('timesync/server');
-// server_io = require('socket.io').listen(server);
+server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
-
-/*
 // handle timesync requests
 app.use('/timesync', timesyncServer.requestHandler);
 
-//socket.io
+var currentWorks = [];
+var currentWorksIX = 0;
+
+//Main Server socket.io
 io.on('connection', function(socket) {
-  socket.on('createEvents', function(data) {
-    socket.broadcast.emit('createEventsBroadcast', {
-      eventDataArr: data.eventDataArr
+
+  //Request for new piece from splash page
+  socket.on('mkNewPiece', function(data) {
+    var newPieceType = data.pieceType;
+    var newPieceName = data.pieceName;
+    var newPieecArr = [];
+    var dt = new Date();
+    var year = dt.getFullYear();
+    var month = dt.getMonth() + 1;
+    var day = dt.getDate();
+    var hour = dt.getHours();
+    var min = dt.getMinutes();
+    var timestamp = year + "_" + month + "_" + day + "_" + hour + "_" + min;
+    var newPieceID = currentWorksIX + "-" + timestamp;
+    var newPieceArr = [newPieceID, newPieceType, newPieceName];
+    currentWorks.push(newPieceArr);
+    currentWorksIX++;
+    socket.broadcast.emit('newPieceBroadcast', {
+      newPieceID: newPieceArr
     });
-    socket.emit('createEventsBroadcast', {
-      eventDataArr: data.eventDataArr
+    socket.emit('newPieceBroadcast', {
+      newPieceIDArr: newPieceArr
     });
-  });
-  socket.on('startpiece', function(data) {
-    socket.emit('startpiecebroadcast', {});
-    socket.broadcast.emit('startpiecebroadcast', {});
-  });
-  socket.on('pause', function(data) {
-    socket.emit('pauseBroadcast', {
-      pauseState: data.pauseState,
-      pauseTime: data.pauseTime
-    });
-    socket.broadcast.emit('pauseBroadcast', {
-      pauseState: data.pauseState,
-      pauseTime: data.pauseTime
-    });
-  });
-  // LOAD PIECE
-  socket.on('loadPiece', function(data) {
-    socket.emit('loadPieceBroadcast', {
-      eventsArray: data.eventsArray
-    });
-    socket.broadcast.emit('loadPieceBroadcast', {
-      eventsArray: data.eventsArray
-    });
-  });
-  // NEW TEMPO
-  socket.on('newTempo', function(data) {
-    socket.emit('newTempoBroadcast', {
-      newTempo: data.newTempo
-    });
-    socket.broadcast.emit('newTempoBroadcast', {
-      newTempo: data.newTempo
-    });
-  });
-  // STOP
-  socket.on('stop', function(data) {
-    socket.emit('stopBroadcast', {});
-    socket.broadcast.emit('stopBroadcast', {});
   });
 
 });
-*/

@@ -13,21 +13,6 @@ var timeAdjustment = 10;
 // SVG ---------------------------- >
 var SVG_NS = "http://www.w3.org/2000/svg";
 var SVG_XLINK = 'http://www.w3.org/1999/xlink';
-// CONTROL PANEL ------------------ >
-var controlPanel;
-var ctrlPanelH = 95;
-var ctrlPanelW = 310;
-var cbs = []; //checkboxes
-// BUTTONS ------------------------ >
-var activateButtons = true; //use this if you need to do some time consuming processing before anything else
-var activateStartBtn = false;
-var activatePauseStopBtn = false;
-var activateSaveBtn = false;
-// START -------------------------- >
-var startPieceGate = true;
-var pauseState = 0;
-var pausedTime = 0;
-var animationGo = true;
 // COLORS ------------------------ >
 var clr_seaGreen = new THREE.Color("rgb(0, 255, 108)");
 var clr_neonMagenta = new THREE.Color("rgb(255, 21, 160)");
@@ -43,55 +28,30 @@ var clr_purple = new THREE.Color("rgb(255, 0, 255)");
 var clr_neonRed = new THREE.Color("rgb(255, 37, 2)");
 var clr_safetyOrange = new THREE.Color("rgb(255, 103, 0)");
 var clr_green = new THREE.Color("rgb(0, 255, 0)");
-// EVENTS --------------------------------- >
-//// DIAL Notation Data ////////////////////////////////////
-//[url, w, h]
-var notationUrlsDimensions = [];
-var motiveWeightingSets = [
-  [0.13, 0.13, 0.13, 0.13, 0.42],
-  [0.15, 0.3, 0.18, 0.28, 0.31],
-  [0.23, 0.07, 0.2, 0.11, 0.22],
-  [0.2, 0.22, 0.2, 0.11, 0.11]
-];
-var numTicksPerDial = [12, 11, 13, 9];
-var useNotationProbabilities = [0.36, 0.42, 0.33, 0.41];
-var bpms = [87, 87.045, 87.091, 87.1346];
-for (var i = 0; i < numDials; i++) notationUrlsDimensions.push([]);
-// 4 dials
-var motivePaths = [
-  [
-    "/notation/eight_accent_2ndPartial_27_34.svg",
-    "/notation/eight_accent_1stPartial_27_34.svg",
-    "/notation/triplet_accent_1st_partial_45_45.svg",
-    "/notation/quarter_accent_12_35.svg",
-    "/notation/quadruplet_accent.svg"
-  ],
-  [
-    "/notation/eight_accent_2ndPartial_27_34.svg",
-    "/notation/eight_accent_1stPartial_27_34.svg",
-    "/notation/triplet_accent_1st_partial_45_45.svg",
-    "/notation/quarter_accent_12_35.svg",
-    "/notation/quadruplet_accent.svg"
-  ],
-  [
-    "/notation/eight_accent_2ndPartial_27_34.svg",
-    "/notation/eight_accent_1stPartial_27_34.svg",
-    "/notation/triplet_accent_1st_partial_45_45.svg",
-    "/notation/quarter_accent_12_35.svg",
-    "/notation/quadruplet_accent.svg"
-  ],
-  [
-    "/notation/eight_accent_2ndPartial_27_34.svg",
-    "/notation/eight_accent_1stPartial_27_34.svg",
-    "/notation/triplet_accent_1st_partial_45_45.svg",
-    "/notation/quarter_accent_12_35.svg",
-    "/notation/quadruplet_accent.svg"
-  ]
-];
-
-
-
-// RUN BEFORE INIT ------------------------ >
+// CONTROL PANEL ------------------ >
+var controlPanel;
+var ctrlPanelH = 95;
+var ctrlPanelW = 310;
+var cbs = []; //checkboxes
+// BUTTONS ------------------------ >
+var activateButtons = true; //use this if you need to do some time consuming processing before anything else
+var activateStartBtn = false;
+var activatePauseStopBtn = false;
+var activateSaveBtn = false;
+// START -------------------------- >
+var startPieceGate = true;
+var pauseState = 0;
+var pausedTime = 0;
+var animationGo = true;
+// PIECE ID ----------------------- >
+var newPieceIdDict = getUrlVars();
+var pieceID = newPieceIdDict.id;
+var pieceType = newPieceIdDict.type;
+var pieceNameStr = newPieceIdDict.name;
+console.log(pieceType);
+// GLOBAL SCORE VARIABLES --------- >
+var scoreObj = {};
+// RUN BEFORE INIT ---------------- >
 ////-- TIMESYNC ENGINE --////
 var tsServer;
 if (window.location.hostname == 'localhost') {
@@ -107,24 +67,293 @@ var ts = timesync.create({
 // </editor-fold> END GLOBAL VARIABLES ////////////////////////////////////////
 
 
+// <editor-fold> <<<< START UP SEQUENCE DOCUMENTATION >>>> ----------------- //
+// init() is run from html
+// --> initComposition(): Initialize Global Score Function/Dictionary and
+////// global score elements from passed variables from splash page
+// --> Makes Control Panel to Generate Score Data
+// Generate Score Data Button
+// --> Generates score data using scoreObj['generateScoreDataFunc'] and
+////// stores on server under piece ID
+// </editor-fold> END START UP SEQUENCE DOCUMENTATION /////////////////////////
+
+
+// <editor-fold> <<<< INITIALIZE COMPOSITION >>>> -------------------------- //
+//activate generate score button at end of this function
+function initComposition(a_pieceType) {
+  switch (a_pieceType) {
+    case 'sf002':
+      //INITIALIZE SCORE GLOBALS
+      // Algorithm Data for this Composition
+      var numOfParts = 12;
+      scoreObj['numOfParts'] = numOfParts;
+      var cresDurRangeArr = [14, 14];
+      scoreObj['cresDurRangeArr'] = cresDurRangeArr;
+      var igapRangeArr = [4, 4];
+      scoreObj['igapRangeArr'] = igapRangeArr;
+      var durDeltaAsPercentRangeArr = [-0.07, 0.07];
+      scoreObj['durDeltaAsPercentRangeArr'] = durDeltaAsPercentRangeArr;
+      var gapDeltaAsPercentRangeArr = [0.07, 0.13];
+      scoreObj['gapDeltaAsPercentRangeArr'] = gapDeltaAsPercentRangeArr;
+      var numOfCyclesRangeArr = [9, 13];
+      scoreObj['numOfCyclesRangeArr'] = numOfCyclesRangeArr;
+      // Master Score Globals
+      scoreObj['globalScoreData']; //global score data stored here locally from server
+      scoreObj['eventsForAll']; //generated events for all players stored here locally
+      // Parts
+      scoreObj['partsToRun'] = []; //array of index nums of parts to run locally
+      scoreObj['notationObjects'] = [];
+      // Generate Score Data Function - to be run from ctrl panel button
+      scoreObj['generateScoreDataFunc'] = function generateScoreData(numOfParts, cresDurRangeArr, igapRangeArr, durDeltaAsPercentRangeArr, gapDeltaAsPercentRangeArr, numOfCyclesRangeArr) {
+        //Events have equal length
+        //Gaps between events increase a percentage each event for a certain number
+        //of events then revert to the initial gap growing again
+        var scoreDataArray = [];
+        for (var i = 0; i < numOfParts; i++) {
+          var cresDur = rrand(cresDurRangeArr[0], cresDurRangeArr[1]);
+          var igap = rrand(igapRangeArr[0], igapRangeArr[1]);
+          var durDeltaAsPercent = rrand(durDeltaAsPercentRangeArr[0], durDeltaAsPercentRangeArr[1]);
+          var gapDeltaAsPercent = rrand(gapDeltaAsPercentRangeArr[0], gapDeltaAsPercentRangeArr[1]);
+          var numOfCycles = rrandInt(numOfCyclesRangeArr[0], numOfCyclesRangeArr[1]);
+          var temp_data = generateEventData(cresDur, igap, durDeltaAsPercent, gapDeltaAsPercent, numOfCycles);
+
+          function generateEventData(cresDur, igap, durDeltaAsPercent, gapDeltaAsPercent, numOfCycles) {
+            var eventDataArray = [];
+            var newDur = cresDur;
+            var newGap = igap;
+            var maxNumEvents = PIECE_MAX_DURATION / cresDur;
+            var currCycle = 0;
+            var goTime = 0;
+            eventDataArray.push([goTime, cresDur]);
+            for (var i = 1; i < maxNumEvents; i++) {
+              var tempArr = [];
+              currCycle++;
+              var previousGoTime = eventDataArray[i - 1][0];
+              var previousDur = eventDataArray[i - 1][1];
+              var newGoTime = previousGoTime + previousDur + newGap;
+              if ((currCycle % numOfCycles) == 0) {
+                newDur = cresDur;
+                newGap = igap;
+              } else {
+                newDur = newDur * (1 + durDeltaAsPercent);
+                newGap = newGap * (1 + gapDeltaAsPercent);
+              }
+              tempArr.push(newGoTime);
+              tempArr.push(newDur);
+              eventDataArray.push(tempArr);
+            }
+            //longest/shortest Dur = igap * Math.pow( (1+changeDeltaAsPercent), numOfCycles )
+            return eventDataArray;
+          }
+          scoreDataArray.push(temp_data);
+        }
+        return scoreDataArray;
+      }
+      //Make Generate Score Data PANEL
+      scoreObj['generateScoreDataPanel'] = mkCtrlPanel_GenerateScore('Soundflow #2 - Score Data');
+      mkPieceIdPanel('Piece ID');
+      break;
+  }
+}
+// </editor-fold> INITIALIZE COMPOSITION //////////////////////////////////////
+
+
+// <editor-fold> <<<< PIECE ID CONTROL PANEL >>>> --------------- //
+
+// <editor-fold> <<<< PIECE ID CONTROL PANEL - INIT >>>> //
+function mkPieceIdPanel(title) {
+  var w = 136;
+  var h = 66;
+  var tpanel; //gets returned in jsPanel.create below
+  //Container Div - added to panel in jsPanel.create below to hold all objects
+  var ctrlPanelDiv = document.createElement("div");
+  ctrlPanelDiv.style.width = w.toString() + "px";
+  ctrlPanelDiv.style.height = h.toString() + "px";
+  ctrlPanelDiv.setAttribute("id", "pieceIdPanel");
+  ctrlPanelDiv.style.backgroundColor = "black";
+  var btnW = 120;
+  var btnH = 29;
+  var btnHstr = btnH.toString() + "px";
+  var btnSpace = btnW + 6;
+//Piece Name
+  var pieceNameField = document.createElement("span");
+  pieceNameField.id = 'pieceNameField';
+  pieceNameField.innerText = pieceNameStr;
+  pieceNameField.className = 'lbl lbl-1';
+  pieceNameField.style.width = btnW.toString() + "px";
+  pieceNameField.style.height = '15px';
+  pieceNameField.style.fontSize = '12px';
+  pieceNameField.style.top = "0px";
+  pieceNameField.style.left = "0px";
+  pieceNameField.style.textAlign = "center";
+  ctrlPanelDiv.appendChild(pieceNameField);
+//Piece ID
+  var pieceIdField = document.createElement("span");
+  pieceIdField.id = 'pieceIdField';
+  pieceIdField.innerText = "Piece ID:\n" + pieceID.toString();
+  pieceIdField.className = 'lbl lbl-2';
+  pieceIdField.style.width = btnW.toString() + "px";
+  pieceIdField.style.height = '25px';
+  pieceIdField.style.fontSize = '10px';
+  pieceIdField.style.top = "25px";
+  pieceIdField.style.left = "0px";
+  ctrlPanelDiv.appendChild(pieceIdField);
+
+  // <editor-fold>     <<<< CONTROL PANEL - jsPanel >>>> -------- //
+  // jsPanel
+  jsPanel.create({
+    position: {
+      my: 'left-top',
+      at: 'left-top',
+      offsetX: '0px',
+      offsetY: '0px',
+      autoposition: 'none'
+    },
+    id: 'pieceIdPanel',
+    contentSize: w.toString() + " " + h.toString(),
+    header: 'auto-show-hide',
+    headerControls: {
+      minimize: 'remove',
+      // smallify: 'remove',
+      maximize: 'remove',
+      close: 'remove'
+    },
+    contentOverflow: 'hidden',
+    headerTitle: '<small>' + title  + '</small>',
+    theme: "light",
+    content: ctrlPanelDiv,
+    resizeit: {
+      aspectRatio: 'content',
+      resize: function(panel, paneldata, e) {}
+    },
+    callback: function() {
+      tpanel = this;
+    }
+  });
+  return tpanel;
+}
+// </editor-fold>    END CONTROL PANEL - jsPanel ///////////////////
+
+// </editor-fold> END PIECE ID PANEL ////////////////////////////
+
+
+
+// <editor-fold> <<<< GENERATE SCORE DATA CONTROL PANEL >>>> --------------- //
+
+// <editor-fold> <<<< GENERATE SCORE DATA CONTROL PANEL - INIT >>>> //
+function mkCtrlPanel_GenerateScore(title) {
+  var w = 185;
+  var h = 107;
+  var tpanel; //gets returned in jsPanel.create below
+  //Container Div - added to panel in jsPanel.create below to hold all objects
+  var ctrlPanelDiv = document.createElement("div");
+  ctrlPanelDiv.style.width = w.toString() + "px";
+  ctrlPanelDiv.style.height = h.toString() + "px";
+  ctrlPanelDiv.setAttribute("id", "generateScoreCtrlPanel");
+  ctrlPanelDiv.style.backgroundColor = "black";
+  var btnW = 170;
+  var btnH = 35;
+  var btnHstr = btnH.toString() + "px";
+  var btnSpace = btnW + 6;
+  // </editor-fold>    END GENERATE SCORE DATA CONTROL PANEL - INIT //
+
+  // <editor-fold> <<<< GENERATE SCORE DATA CONTROL PANEL - GENERATE DATA >>>> - //
+  //Initialize Global Score Function/Dictionary and Global Score Elements Here
+  var generateScoreDataButton = document.createElement("BUTTON");
+  generateScoreDataButton.id = 'generateScoreDataButton';
+  generateScoreDataButton.innerText = 'Generate Score Data';
+  generateScoreDataButton.className = 'btn btn-1';
+  generateScoreDataButton.style.width = btnW.toString() + "px";
+  generateScoreDataButton.style.height = btnHstr;
+  generateScoreDataButton.style.fontSize = '14px';
+  generateScoreDataButton.style.top = "0px";
+  generateScoreDataButton.style.left = "0px";
+  generateScoreDataButton.addEventListener("click", function() {
+    if (activateButtons) {
+      socket.emit('createEvents', {
+        eventDataArr: scoreData
+      });
+    }
+  });
+  ctrlPanelDiv.appendChild(generateScoreDataButton);
+  // </editor-fold> END GENERATE SCORE DATA CONTROL PANEL - GENERATE DATA //
+
+  // <editor-fold> <<<< GENERATE SCORE DATA CONTROL PANEL - GENERATE DATA >>>> - //
+  //Initialize Global Score Function/Dictionary and Global Score Elements Here
+  var loadScoreDataButton = document.createElement("BUTTON");
+  loadScoreDataButton.id = 'loadScoreDataButton';
+  loadScoreDataButton.innerText = 'Load Score Data';
+  loadScoreDataButton.className = 'btn btn-1';
+  loadScoreDataButton.style.width = btnW.toString() + "px";
+  loadScoreDataButton.style.height = btnHstr;
+  loadScoreDataButton.style.fontSize = '14px';
+  loadScoreDataButton.style.top = "50px";
+  loadScoreDataButton.style.left = "0px";
+  loadScoreDataButton.addEventListener("click", function() {
+    if (activateButtons) {
+      socket.emit('createEvents', {
+        eventDataArr: scoreData
+      });
+    }
+  });
+  ctrlPanelDiv.appendChild(loadScoreDataButton);
+  // </editor-fold> END GENERATE SCORE DATA CONTROL PANEL - GENERATE DATA //
+
+  // <editor-fold>     <<<< CONTROL PANEL - jsPanel >>>> -------- //
+  // jsPanel
+  jsPanel.create({
+    position: {
+      my: 'center-top',
+      at: 'center-top',
+      offsetX: '0px',
+      offsetY: '0px',
+      autoposition: 'none'
+    },
+    id: 'generateScoreDataPanel',
+    contentSize: w.toString() + " " + h.toString(),
+    header: 'auto-show-hide',
+    headerControls: {
+      minimize: 'remove',
+      // smallify: 'remove',
+      maximize: 'remove',
+      close: 'remove'
+    },
+    onsmallified: function(panel, status) {
+      var headerY = window.innerHeight - 36;
+      headerY = headerY.toString() + "px";
+      panel.style.top = headerY;
+    },
+    onunsmallified: function(panel, status) {
+      var headerY = window.innerHeight - ctrlPanelH - 34;
+      headerY = headerY.toString() + "px";
+      panel.style.top = headerY;
+    },
+    contentOverflow: 'hidden',
+    headerTitle: '<small>' + title  + '</small>',
+    theme: "light",
+    content: ctrlPanelDiv,
+    resizeit: {
+      aspectRatio: 'content',
+      resize: function(panel, paneldata, e) {}
+    },
+    callback: function() {
+      tpanel = this;
+    }
+  });
+  return tpanel;
+}
+// </editor-fold>    END CONTROL PANEL - jsPanel ///////////////////
+
+// </editor-fold> END GENERATE SCORE CONTROL PANEL ////////////////////////////
+
+
 // <editor-fold> <<<< START UP SEQUENCE >>>> ------------------------------- //
-//START UP SEQUENCE DOCUMENTATION
-//// --> init() is run from html
-//// --------> It makes the controlPanel
-//// --> The ctrlPanel:Generate Piece/Load Piece button:
-//// --------> Generates Score Data for all parts using generateScoreData
-//// --------> Sends eventData to all clients
-//// --------> SocketIO receiver createEventsBroadcast
-////// -----------> Stores data in scoreDataForAll
-////// -----------> Generates events with mkAllEvents and stores in eventsForAll
-////// -----------> Generate static elements for parts that are checked
-//// --> The ctrlPanel:Start button runs startPiece():
-//// --------> Starts clockSync engine
-//// --------> Starts Animation Engine
 // INIT --------------------------------------------------- //
 function init() { //run from html onload='init();'
+  // INIT GLOBAL ELEMENTS -------------- >
+  initComposition(pieceType);
   // MAKE CONTROL PANEL ---------------- >
-  controlPanel = mkCtrlPanel("ctrlPanel", ctrlPanelW, ctrlPanelH, "Control Panel");
+  // controlPanel = mkCtrlPanel("ctrlPanel", ctrlPanelW, ctrlPanelH, "Control Panel");
 }
 // FUNCTION: startPiece ----------------------------------- //
 function startPiece() {
@@ -139,348 +368,8 @@ function startClockSync() {
 }
 // </editor-fold> END START UP SEQUENCE ///////////////////////////////////////
 
-/*
-// <editor-fold> <<<< DIAL NOTATION OBJECT >>>> ---------------------------- //
-
-// <editor-fold>        <<<< DIAL NOTATION OBJECT - INIT >>>> -- //
-function mkDialNO(ix, w, h, numTicks, ibpm, motiveUrlSzSet, useNotationProbability, motiveWeightingSet) {
-  var notationObj = {}; //returned object to add all elements and data
-  var cx = w / 2;
-  var cy = h / 2;
-  var innerRadius = 70;
-  var tickLength = 11;
-  var tickWidth = 1;
-  var noteSpace = 70;
-  var midRadius = innerRadius + noteSpace;
-  var bbRadius = 10;
-  var bbLandLineY = cy + innerRadius - 20;
-  var bbImpactY = bbLandLineY - bbRadius;
-  var bbDescentLengthFrames = 13;
-  var bbDescentLengthPx = (bbDescentLengthFrames * (bbDescentLengthFrames + 1)) / 2;
-  var bbStartY = bbImpactY - bbDescentLengthPx; // 78 accomodates acceleration 1+2+3+4...12
-  var bbLandLineR = 10;
-  var bbLandLineX1 = cx - bbLandLineR;
-  var bbLandLineX2 = cx + bbLandLineR;
-  var bbOffFrame = 0;
-  var bbDurFrames = 18;
-  var bbVelocity = 1;
-  var bbAccel = 1;
-  // var bbDescentLength = bbImpactY - bbStartY; //80 velocity has to into this whole
-  var bbLeadTime;
-  var bbDir = 1;
-  var defaultStrokeWidth = 4;
-  var outerRadius = w / 2;
-  var tickBlinkTimes = []; //timer to blink ticks
-  var notes = [];
-  var noteBoxes = [];
-  var tickDegs = [];
-  for (var i = 0; i < numTicks; i++) tickBlinkTimes.push(0); //populate w/0s
-  // Calculate number of degrees per frame
-  var beatsPerSec = ibpm / 60;
-  var beatsPerFrame = beatsPerSec / FRAMERATE;
-  var degreesPerBeat = 360 / numTicks;
-  var degreesPerFrame = degreesPerBeat * beatsPerFrame;
-  var framesPerBeat = 1.0 / beatsPerFrame;
-  var initDeg = 270 - (5 * degreesPerBeat);
-  var currDeg = initDeg;
-  var lastDeg = currDeg;
-  // 100 beats trial
-  var bbBeatFrames = [];
-  for (var i = 0; i < 3000; i++) {
-    bbBeatFrames.push(Math.round(i * framesPerBeat) - bbDescentLengthFrames);
-  }
-  notationObj['newTempoFunc'] =
-    function newTempo(newBPM) {
-      var newBeatsPerSec = newBPM / 60;
-      var newBeatsPerFrame = newBeatsPerSec / FRAMERATE;
-      degreesPerFrame = degreesPerBeat * newBeatsPerFrame;
-    }
-  // Generate ID
-  var id = 'dial' + ix;
-  notationObj['id'] = id;
-  // Make SVG Canvas ------------- >
-  var canvasID = id + 'canvas';
-  var svgCanvas = mkSVGcanvas(canvasID, w, h); //see func below
-  notationObj['canvas'] = svgCanvas;
-  // Make jsPanel ----------------- >
-  var panelID = id + 'panel';
-  var panel = mkPanel(panelID, svgCanvas, w, h, "Player " + ix.toString()); //see func below
-  notationObj['panel'] = panel;
-  // </editor-fold>       END DIAL NOTATION OBJECT - INIT /////////
-
-  // <editor-fold>      <<<< DIAL NOTATION OBJECT - STATIC ELEMENTS //
-  //// Ring -------------------------------- //
-  var ring = document.createElementNS(SVG_NS, "circle");
-  ring.setAttributeNS(null, "cx", cx);
-  ring.setAttributeNS(null, "cy", cy);
-  ring.setAttributeNS(null, "r", innerRadius);
-  ring.setAttributeNS(null, "stroke", "rgb(153, 255, 0)");
-  ring.setAttributeNS(null, "stroke-width", defaultStrokeWidth);
-  ring.setAttributeNS(null, "fill", "none");
-  var ringID = id + 'ring';
-  ring.setAttributeNS(null, "id", ringID);
-  svgCanvas.appendChild(ring);
-  notationObj['ring'] = ring;
-  //// Dial ------------------------------- //
-  var dialWidth = 1;
-  var dial = document.createElementNS(SVG_NS, "line");
-  var ogx1 = outerRadius * Math.cos(rads(initDeg)) + cx;
-  var ogy1 = outerRadius * Math.sin(rads(initDeg)) + cy;
-  dial.setAttributeNS(null, "x1", ogx1);
-  dial.setAttributeNS(null, "y1", ogy1);
-  dial.setAttributeNS(null, "x2", cx);
-  dial.setAttributeNS(null, "y2", cy);
-  dial.setAttributeNS(null, "stroke", "rgb(153,255,0)");
-  dial.setAttributeNS(null, "stroke-width", dialWidth);
-  var dialID = id + 'dial';
-  dial.setAttributeNS(null, "id", dialID);
-  svgCanvas.appendChild(dial);
-  notationObj['dial'] = dial;
-  //// Ticks ------------------------------- //
-  var ticks = [];
-  var tickRadius = innerRadius - (defaultStrokeWidth / 2) - 3; // ticks offset from dial 3px like a watch
-  for (var i = 0; i < numTicks; i++) {
-    var tickDeg = -90 + (degreesPerBeat * i); //-90 is 12 o'clock
-    tickDegs.push(tickDeg); //store degrees for collision detection later
-    var x1 = midRadius * Math.cos(rads(tickDeg)) + cx;
-    var y1 = midRadius * Math.sin(rads(tickDeg)) + cy;
-    var x2 = (tickRadius - tickLength) * Math.cos(rads(tickDeg)) + cx;
-    var y2 = (tickRadius - tickLength) * Math.sin(rads(tickDeg)) + cy;
-    var tick = document.createElementNS(SVG_NS, "line");
-    tick.setAttributeNS(null, "x1", x1);
-    tick.setAttributeNS(null, "y1", y1);
-    tick.setAttributeNS(null, "x2", x2);
-    tick.setAttributeNS(null, "y2", y2);
-    tick.setAttributeNS(null, "stroke", "rgb(255,128,0)");
-    tick.setAttributeNS(null, "stroke-width", tickWidth);
-    var tickID = id + 'tick' + i;
-    tick.setAttributeNS(null, "id", tickID);
-    svgCanvas.appendChild(tick);
-    ticks.push(tick);
-  }
-  notationObj['ticks'] = ticks;
-  //// Bouncing Ball ------------------------------- //
-  //bb landing line
-  var bbLandLineWidth = 2;
-  var bbLandLine = document.createElementNS(SVG_NS, "line");
-  bbLandLine.setAttributeNS(null, "x1", bbLandLineX1);
-  bbLandLine.setAttributeNS(null, "y1", bbLandLineY);
-  bbLandLine.setAttributeNS(null, "x2", bbLandLineX2);
-  bbLandLine.setAttributeNS(null, "y2", bbLandLineY);
-  bbLandLine.setAttributeNS(null, "stroke", "rgb(153,255,0)");
-  bbLandLine.setAttributeNS(null, "stroke-width", bbLandLineWidth);
-  var bbLandLineID = id + 'bbLandLine';
-  bbLandLine.setAttributeNS(null, "id", bbLandLineID);
-  svgCanvas.appendChild(bbLandLine);
-  notationObj['bbLandLine'] = bbLandLine;
-  //Create array of 4 balls
-  //Only visible x amount of time before
-  //bb landing line
-  var bb = document.createElementNS(SVG_NS, "circle");
-  bb.setAttributeNS(null, "cx", cx);
-  bb.setAttributeNS(null, "cy", bbStartY);
-  bb.setAttributeNS(null, "r", bbRadius); //set bb radius
-  bb.setAttributeNS(null, "stroke", "none");
-  bb.setAttributeNS(null, "fill", "rgb(153, 255, 0)");
-  var bbID = id + 'bb';
-  bb.setAttributeNS(null, "id", bbID);
-  bb.setAttributeNS(null, 'visibility', 'hidden');
-  svgCanvas.appendChild(bb);
-  notationObj['bouncingBall'] = bb;
-  // </editor-fold>     END DIAL NOTATION OBJECT - STATIC ELEMENTS //
-
-  // <editor-fold>      <<<< DIAL NOTATION OBJECT - GENERATE PIECE //
-  var rectSize = 36;
-  notationObj['generateNotesArr'] = function() {
-    // FUNCTION GENERATE PIECE ALGORITHIM ----------------------------------- //
-    var notesArr = [];
-    for (var i = 0; i < tickDegs.length; i++) {
-      var useNotation = probability(useNotationProbability); //set porbability of any given tick having a notation
-      // if this tick has notation, algorithm for choosing the motive for this tick
-      if (useNotation) {
-        //Universalize this based on array of motives
-        var motivesIxSet = [];
-        // Generate numbers 0-size of set for chooseWeighted algo below
-        motiveUrlSzSet.forEach(function(it, ix) {
-          motivesIxSet.push(ix);
-        });
-        var chosenMotiveIx = chooseWeighted(motivesIxSet, motiveWeightingSet);
-        var chosenMotive = motiveUrlSzSet[chosenMotiveIx];
-        notesArr.push(chosenMotive);
-      } else { //not all ticks have a notation box. push 0 to empty ones
-        notesArr.push(-1);
-      }
-    }
-    notationObj['notesArr'] = notesArr;
-    return notesArr;
-  }
-  // </editor-fold>     END DIAL NOTATION OBJECT - GENERATE PIECE
-
-  // <editor-fold>      <<<< DIAL NOTATION OBJECT - GENERATE NOTATION >>>> //
-  notationObj['generateNotation'] = function(notesArr) {
-    //Remove Previous Notation
-    notes.forEach(function(it, ix) {
-      if (it != 0) {
-        it.parentNode.removeChild(it);
-      }
-    });
-    noteBoxes.forEach(function(it, ix) {
-      if (it != 0) {
-        it.parentNode.removeChild(it);
-      }
-    });
-    notes = [];
-    noteBoxes = [];
-    // Generate New Notation and Boxes
-    for (var i = 0; i < notesArr.length; i++) {
-      if (notesArr[i] != -1) {
-        var url = notesArr[i][0];
-        var svgW = notesArr[i][1];
-        var svgH = notesArr[i][2];
-        var deg = notesArr[i][3];
-        var notationSVG = document.createElementNS(SVG_NS, "image");
-        notationSVG.setAttributeNS(SVG_XLINK, 'xlink:href', url);
-        var rectx = midRadius * Math.cos(rads(tickDegs[i])) + cx - (svgW / 2);
-        var recty = midRadius * Math.sin(rads(tickDegs[i])) + cy - (svgH / 2);
-        notationSVG.setAttributeNS(null, "transform", "translate( " + rectx.toString() + "," + recty.toString() + ")");
-        var notationSVGID = id + 'notationSVG' + i;
-        notationSVG.setAttributeNS(null, "id", notationSVGID);
-        notationSVG.setAttributeNS(null, 'visibility', 'visible');
-        notes.push(notationSVG);
-        var noteBox = document.createElementNS(SVG_NS, "rect");
-        noteBox.setAttributeNS(null, "width", svgW + 6);
-        noteBox.setAttributeNS(null, "height", svgH + 6);
-        var boxX = rectx - 3;
-        var boxY = recty - 3;
-        noteBox.setAttributeNS(null, "transform", "translate( " + boxX.toString() + "," + boxY.toString() + ")");
-        var noteBoxID = id + 'noteBox' + i;
-        noteBox.setAttributeNS(null, "id", canvasID);
-        noteBox.setAttributeNS(null, 'visibility', 'visible');
-        noteBox.setAttributeNS(null, "fill", "white");
-        noteBoxes.push(noteBox);
-        svgCanvas.appendChild(noteBox);
-        svgCanvas.appendChild(notationSVG);
-      } else { //not all ticks have a notation box. push 0 to empty ones
-        notes.push(0);
-        noteBoxes.push(0);
-      }
-    }
-  }
-  // </editor-fold>     END DIAL NOTATION OBJECT - GENERATE NOTATION
-
-  // <editor-fold>      <<<< DIAL NOTATION OBJECT - ANIMATION >>>> //
-  var tickBlinkDur = 30;
-  var growTickLen = 12; //expand tick stroke-width by this amount
-  // ---------------------------------------------------------- >
-  var animateFunc = function(time) {
-    // Animate Dial
-    currDeg += degreesPerFrame; //advance degreesPerFrame
-    var newDialX1 = outerRadius * Math.cos(rads(currDeg)) + cx;
-    var newDialY1 = outerRadius * Math.sin(rads(currDeg)) + cy;
-    dial.setAttributeNS(null, "x1", newDialX1);
-    dial.setAttributeNS(null, "y1", newDialY1);
-    // Animate Ticks
-    var currDegMod = ((currDeg + 90) % 360) - 90; //do this hack so you are not mod negative number
-    tickDegs.forEach(function(it, ix) {
-      if (ix == 0) { //for tick at 12o'clock to accomodate for positive to negative transition
-        if (lastDeg > 0 && currDegMod < 0) { //if last frame was pos and this frame neg
-          ticks[ix].setAttributeNS(null, "stroke", "rgb(255,0,0)");
-          ticks[ix].setAttributeNS(null, "stroke-width", tickWidth + growTickLen);
-          tickBlinkTimes[ix] = (time + tickBlinkDur); //set blink timer time for this tick
-          // Note Boxes
-          if (noteBoxes[ix] != 0) {
-            noteBoxes[ix].setAttributeNS(null, "stroke", "rgb(255,0,0)");
-            noteBoxes[ix].setAttributeNS(null, "stroke-width", 4);
-          }
-        }
-      } else {
-        if (currDeg < 270) { // different color for count in
-          if (it > lastDeg && it <= currDegMod) { //all other ticks looking to see that last frame dial was before this tick and in this frame dial is equal or past this tick
-            ticks[ix].setAttributeNS(null, "stroke", "rgb(153,255,0)");
-            ticks[ix].setAttributeNS(null, "stroke-width", tickWidth + growTickLen);
-            tickBlinkTimes[ix] = (time + tickBlinkDur); //set blink timer time for this tick
-          }
-        } else {
-          if (it > lastDeg && it <= currDegMod) { //all other ticks looking to see that last frame dial was before this tick and in this frame dial is equal or past this tick
-            ticks[ix].setAttributeNS(null, "stroke", "rgb(255,0,0)");
-            ticks[ix].setAttributeNS(null, "stroke-width", tickWidth + growTickLen);
-            tickBlinkTimes[ix] = (time + tickBlinkDur); //set blink timer time for this tick
-            // Note Boxes
-            if (noteBoxes[ix] != 0) {
-              noteBoxes[ix].setAttributeNS(null, "stroke", "rgb(255,0,0)");
-              noteBoxes[ix].setAttributeNS(null, "stroke-width", 4);
-            }
-          }
-        }
-      }
-    });
-    // Start Bouncing Ball Timer
-    for (var k = 0; k < bbBeatFrames.length; k++) {
-      if (framect == bbBeatFrames[k]) {
-        bbVelocity = 1;
-        bbAccel = 1;
-        bb.setAttributeNS(null, 'cy', bbStartY)
-        bbOffFrame = framect + bbDurFrames;
-        bbDir = 1;
-        break;
-      }
-    }
-    lastDeg = currDegMod;
-    // Tick blink timer
-    tickBlinkTimes.forEach(function(it, ix) {
-      if (time > it) {
-        ticks[ix].setAttributeNS(null, "stroke", "rgb(255,128,0)");
-        ticks[ix].setAttributeNS(null, "stroke-width", tickWidth);
-        // Note Boxes
-        if (noteBoxes[ix] != 0) {
-          noteBoxes[ix].setAttributeNS(null, "stroke", "white");
-          noteBoxes[ix].setAttributeNS(null, "stroke-width", 0);
-        }
-      }
-    })
-    // Bouncing Ball Animation
-    if (framect < bbOffFrame) {
-      bb.setAttributeNS(null, 'visibility', 'visible');
-      var bbCurrentY = parseInt(bb.getAttributeNS(null, 'cy'));
-      bbVelocity = bbVelocity + bbAccel;
-      var bbNewY = bbCurrentY + (bbVelocity * bbDir);
-      if (bbNewY > bbImpactY) {
-        bbDir = -1;
-        bbVelocity = 10;
-        bbAccel = -1;
-      }
-      bb.setAttributeNS(null, 'cy', bbNewY)
-    } else {
-      bb.setAttributeNS(null, 'visibility', 'hidden');
-    }
-  }
-  notationObj['animateFunc'] = animateFunc;
-  return notationObj;
-}
-// </editor-fold>     END DIAL NOTATION OBJECT - ANIMATION ///////
-
-// </editor-fold> END DIAL NOTATION OBJECT ////////////////////////////////////
-*/
 
 // <editor-fold> <<<< NOTATION OBJECT - SF002 >>>> ------------ //
-
-// <editor-fold>    <<<< NOTATION OBJECT - SCORE INIT >>>> ---------------- //
-function sf002_scoreInit(){
-  var scoreGlobals = {};
-  //CRESCENDOS - CURVE FOLLOWER & RUNWAY
-  // numOfParts, cresDurRangeArr, igapRangeArr = 4, deltaAsPercentRangeArr, numOfCyclesRangeArr
-  var numOfParts = 12;
-  var cresDurRangeArr = [14, 14];
-  var igapRangeArr = [4, 4];
-  var durDeltaAsPercentRangeArr = [-0.07, 0.07];
-  var gapDeltaAsPercentRangeArr = [0.07, 0.13];
-  var numOfCyclesRangeArr = [9, 13];
-  var scoreDataForAll; //global event data stored here; events are sent through the network to all players
-  var eventsForAll; //generated events stored here
-  var notationObjects = [];
-  var partsToRun = [];
-}
-// </editor-fold>       END NOTATION OBJECT - SCORE INIT /////////
 
 
 // <editor-fold>    <<<< NOTATION OBJECT - INIT >>>> ---------------- //
@@ -773,63 +662,19 @@ function mkNotationObject_runwayCurveFollow(ix, w, h, len, placementOrder /*[#, 
   }
   // </editor-fold>    END NOTATION OBJECT - ANIMATE >>>> ----------- //
 
+
+
+
   // <editor-fold> <<<< EVENTS >>>> ---------------------------- //
 
-  // <editor-fold>      <<<< EVENTS - GENERATE SCORE DATA - CRES //
-  //Events have equal length
-  //Gaps between events increase a percentage each event for a certain number
-  //of events then revert to the initial gap growing again
-  notationObj['generateScoreData'] = function generateScoreData(numOfParts, cresDurRangeArr, igapRangeArr, durDeltaAsPercentRangeArr, gapDeltaAsPercentRangeArr, numOfCyclesRangeArr) {
-    var scoreDataArray = [];
-    for (var i = 0; i < numOfParts; i++) {
-      var cresDur = rrand(cresDurRangeArr[0], cresDurRangeArr[1]);
-      var igap = rrand(igapRangeArr[0], igapRangeArr[1]);
-      var durDeltaAsPercent = rrand(durDeltaAsPercentRangeArr[0], durDeltaAsPercentRangeArr[1]);
-      var gapDeltaAsPercent = rrand(gapDeltaAsPercentRangeArr[0], gapDeltaAsPercentRangeArr[1]);
-      var numOfCycles = rrandInt(numOfCyclesRangeArr[0], numOfCyclesRangeArr[1]);
-      var temp_data = generateEventData(cresDur, igap, durDeltaAsPercent, gapDeltaAsPercent, numOfCycles);
-      scoreDataArray.push(temp_data);
-    }
-    return scoreDataArray;
-  }
-  // </editor-fold>     END EVENTS - GENERATE SCORE DATA - CRES //
 
-  // <editor-fold>      <<<< EVENTS - GENERATE EVENT DATA - CRES //
-  //Events start all equal length
-  //Events & Gaps between events increase a percentage each event for a certain number
-  //of events then revert to the initial gap growing again
-  notationObj['generateEventData'] = function generateEventData(cresDur, igap, durDeltaAsPercent, gapDeltaAsPercent, numOfCycles) {
-    var eventDataArray = [];
-    var newDur = cresDur;
-    var newGap = igap;
-    var maxNumEvents = PIECE_MAX_DURATION / cresDur;
-    var currCycle = 0;
-    var goTime = 0;
-    eventDataArray.push([goTime, cresDur]);
-    for (var i = 1; i < maxNumEvents; i++) {
-      var tempArr = [];
-      currCycle++;
-      var previousGoTime = eventDataArray[i - 1][0];
-      var previousDur = eventDataArray[i - 1][1];
-      var newGoTime = previousGoTime + previousDur + newGap;
-      if ((currCycle % numOfCycles) == 0) {
-        newDur = cresDur;
-        newGap = igap;
-      } else {
-        newDur = newDur * (1 + durDeltaAsPercent);
-        newGap = newGap * (1 + gapDeltaAsPercent);
-      }
-      tempArr.push(newGoTime);
-      tempArr.push(newDur);
-      eventDataArray.push(tempArr);
-    }
-    //longest/shortest Dur = igap * Math.pow( (1+changeDeltaAsPercent), numOfCycles )
-    return eventDataArray;
-  }
-  // </editor-fold>     END EVENTS - GENERATE EVENT DATA - CRES //
+
+
+
+
 
   // <editor-fold>      <<<< EVENTS - MAKE ALL EVENTS //
-notationObj['mkAllEvents'] = function mkAllEvents(scoreData) {
+  notationObj['mkAllEvents'] = function mkAllEvents(scoreData) {
     var allEventsMatrix = [];
     for (var i = 0; i < scoreData.length; i++) {
       var tempEvents = mkEvents(scoreData[i]);
@@ -877,53 +722,6 @@ notationObj['mkAllEvents'] = function mkAllEvents(scoreData) {
   return notationObj;
 }
 // </editor-fold> <<<< END NOTATION OBJECT >>>> ---------------------------- //
-
-
-// <editor-fold> <<<< PIECE CHOOSER >>>> ----------------------------------- //
-
-// <editor-fold>     <<<< PIECE CHOOSER - jsPanel >>>> -------- //
-// jsPanel
-jsPanel.create({
-  position: 'left-bottom',
-  id: panelid,
-  contentSize: w.toString() + " " + h.toString(),
-  header: 'auto-show-hide',
-  headerControls: {
-    minimize: 'remove',
-    // smallify: 'remove',
-    maximize: 'remove',
-    close: 'remove'
-  },
-  onsmallified: function(panel, status) {
-    var headerY = window.innerHeight - 36;
-    headerY = headerY.toString() + "px";
-    panel.style.top = headerY;
-  },
-  onunsmallified: function(panel, status) {
-    var headerY = window.innerHeight - ctrlPanelH - 34;
-    headerY = headerY.toString() + "px";
-    panel.style.top = headerY;
-  },
-  contentOverflow: 'hidden',
-  headerTitle: '<small>' + title + '</small>',
-  theme: "light",
-  content: ctrlPanelDiv,
-  resizeit: {
-    aspectRatio: 'content',
-    resize: function(panel, paneldata, e) {}
-  },
-  // dragit: {
-  //   disable: true
-  // },
-  callback: function() {
-    tpanel = this;
-  }
-});
-return tpanel;
-}
-// </editor-fold>    END PIECE CHOOSER - jsPanel ///////////////////
-
-// </editor-fold> END PIECE CHOOSER ///////////////////////////////////////////
 
 
 // <editor-fold> <<<< CONTROL PANEL >>>> ----------------------------------- //
@@ -1104,7 +902,7 @@ function mkCtrlPanel(panelid, w, h, title) {
     if (activateButtons) {
       if (activateSaveBtn) {
         var eventDataStr = "";
-        scoreDataForAll.forEach(function(it, ix) {
+        globalScoreData.forEach(function(it, ix) {
           var eventData = it;
           for (var i = 0; i < eventData.length; i++) {
             if (i != (eventData.length - 1)) { //if not last (last item will not have semicolon)
@@ -1296,9 +1094,9 @@ socket.on('startpiecebroadcast', function(data) {
 
 // <editor-fold>       <<<< SOCKET IO - CREATE EVENTS >>>> ------ //
 socket.on('createEventsBroadcast', function(data) {
-  scoreDataForAll = data.eventDataArr;
+  globalScoreData = data.eventDataArr;
   // Generate events for this player from event data here and store in eventsForAll
-  eventsForAll = mkAllEvents(scoreDataForAll);
+  eventsForAll = mkAllEvents(globalScoreData);
   // GENERATE STATIC ELEMENTS ------------------- >
   //Based on which player checkboxes are chosen
   cbs.forEach((it, ix) => {
@@ -1344,9 +1142,9 @@ socket.on('pauseBroadcast', function(data) {
 // <editor-fold>       <<<< SOCKET IO - LOAD PIECE >>>> --------- //
 socket.on('loadPieceBroadcast', function(data) {
   var eventsArray = data.eventsArray;
-  scoreDataForAll = data.eventsArray;
+  globalScoreData = data.eventsArray;
   // Generate events for this player from event data here and store in eventsForAll
-  eventsForAll = mkAllEvents(scoreDataForAll);
+  eventsForAll = mkAllEvents(globalScoreData);
   // GENERATE STATIC ELEMENTS ------------------- >
   //Based on which player checkboxes are chosen
   cbs.forEach((it, ix) => {
