@@ -1,4 +1,4 @@
-// <editor-fold> <<<< GLOBAL VARIABLES >>>> -------------------------------- //
+// <editor-fold>  <<<< GLOBAL VARIABLES >>>> ------------------------------ //
 // CLOCK -------------------------- >
 var framect = 0;
 var delta = 0.0;
@@ -22,45 +22,24 @@ var t_numFrets = 11;
 // TIMING ------------------------- >
 var FRAMERATE = 60.0;
 var MSPERFRAME = 1000.0 / FRAMERATE;
-var SECPERFRAME = 1.0 / FRAMERATE;
 var RUNWAY_PXPERSEC = 40.0;
-var RUNWAY_PXPERMS = RUNWAY_PXPERSEC / 1000.0;
 var RUNWAY_PXPERFRAME = RUNWAY_PXPERSEC / FRAMERATE;
 var RUNWAY_GOFRETPOS_Y = -RUNWAYLENGTH / 2;
-var RUNWAY_GOFRETHEIGHT = 4;
-var PIECE_MAX_DURATION = 3600;
 var RUNWAYLENGTH_FRAMES = RUNWAYLENGTH / RUNWAY_PXPERFRAME;
-var timeAdjustment = 10;
+var preStartTime = 10;
+var timeAdjustment = preStartTime;
+var clockAdj = 0;
 // SVG ---------------------------- >
 var SVG_NS = "http://www.w3.org/2000/svg";
-var SVG_XLINK = 'http://www.w3.org/1999/xlink';
-// COLORS ------------------------ >
-var clr_seaGreen = new THREE.Color("rgb(0, 255, 108)");
-var clr_neonMagenta = new THREE.Color("rgb(255, 21, 160)");
-var clr_neonBlue = new THREE.Color("rgb(6, 107, 225)");
-var clr_forest = new THREE.Color("rgb(11, 102, 35)");
-var clr_jade = new THREE.Color("rgb(0, 168, 107)");
-var clr_neonGreen = new THREE.Color("rgb(57, 255, 20)");
-var clr_limegreen = new THREE.Color("rgb(153, 255, 0)");
-var clr_yellow = new THREE.Color("rgb(255, 255, 0)");
-var clr_orange = new THREE.Color("rgb(255, 128, 0)");
-var clr_red = new THREE.Color("rgb(255, 0, 0)");
-var clr_purple = new THREE.Color("rgb(255, 0, 255)");
-var clr_neonRed = new THREE.Color("rgb(255, 37, 2)");
-var clr_safetyOrange = new THREE.Color("rgb(255, 103, 0)");
-var clr_green = new THREE.Color("rgb(0, 255, 0)");
 // CONTROL PANELS ------------------ >
-var controlPanel;
+var scoreCtrlLocalPanel;
 var ctrlPanelH = 95;
-var ctrlPanelW = 310;
 var cbs = []; //checkboxes
 var pieceIdPanel;
 var genPartsPanel;
 // BUTTONS ------------------------ >
-var activateButtons = true; //use this if you need to do some time consuming processing before anything else
-var activateStartBtn = false;
-var activatePauseStopBtn = false;
-var activateSaveBtn = false;
+var activateStartBtn = true;
+var activatePauseBtn = false;
 // START -------------------------- >
 var startPieceGate = true;
 var pauseState = 0;
@@ -101,31 +80,32 @@ var ts = timesync.create({
 // </editor-fold> END GLOBAL VARIABLES ////////////////////////////////////////
 
 
-// <editor-fold> <<<< INITIALIZE COMPOSITION >>>> -------------------------- //
+// <editor-fold>  <<<< INITIALIZE COMPOSITION >>>> ------------------------ //
 //activate generate score button at end of this function
 function initComposition() {
-  //Get Score Data from Server
+  //When this code is launched, getUrlVars gets pieceID passed from the
+  //splashpage through the URL
+  // This socket msg gets score data from the server
   socket.emit('getScoreData', {
     pieceID: pieceID
   });
 }
+//Msg from server comes here and populates global variables
 socket.on('scoreDataBroadcast', function(data) {
   globalScoreData = data.scoreData[3];
   eventsForAll = mkAllEvents(globalScoreData);
   //Make Generate Score Data PANEL
   pieceIdPanel = mkPieceIdPanel('Piece ID');
+  //This panel generates appropriate parts and then closes and opens performance controls
   genPartsPanel = mkCtrlPanel_generateParts();
 });
 // </editor-fold> INITIALIZE COMPOSITION //////////////////////////////////////
 
 
-// <editor-fold> <<<< START UP SEQUENCE >>>> ------------------------------- //
+// <editor-fold>  <<<< START UP SEQUENCE >>>> ----------------------------- //
 // INIT --------------------------------------------------- //
 function init() { //run from html onload='init();'
-  // INIT GLOBAL ELEMENTS -------------- >
   initComposition();
-  // MAKE CONTROL PANEL ---------------- >
-  // controlPanel = mkCtrlPanel("ctrlPanel", ctrlPanelW, ctrlPanelH, "Control Panel");
 }
 // FUNCTION: startPiece ----------------------------------- //
 function startPiece() {
@@ -141,10 +121,9 @@ function startClockSync() {
 // </editor-fold> END START UP SEQUENCE ///////////////////////////////////////
 
 
-// <editor-fold> <<<< NOTATION OBJECT - SF002 >>>> ------------ //
+// <editor-fold>  <<<< NOTATION OBJECT - SF002 >>>> ----------------------- //
 
 // <editor-fold>    <<<< NOTATION OBJECT - INIT >>>> ---------------- //
-
 function mkNotationObject_runwayCurveFollow(ix, w, h, len, placementOrder /*[#, ofTotal]*/ ) {
   var notationObj = {};
   notationObj['ix'] = ix;
@@ -202,11 +181,11 @@ function mkNotationObject_runwayCurveFollow(ix, w, h, len, placementOrder /*[#, 
   // Make jsPanels ----------------- >
   //// Runway ////
   var runwayPanelID = id + 'runwayPanel';
-  var runwayPanel = mkPanel(runwayPanelID, runwayCanvas, w, h, "Player " + ix.toString() + " - Runway", ['center-top', roffsetX, roffsetY, rautopos]);
+  var runwayPanel = mkPanel(runwayPanelID, runwayCanvas, w, h, "Player " + ix.toString() + " - Runway", ['center-top', roffsetX, roffsetY, rautopos], 'xs');
   notationObj['runwayPanel'] = runwayPanel;
   //// Curve Follower ////
   var crvFollowPanelID = id + 'crvFollowPanel';
-  var crvFollowPanel = mkPanel(crvFollowPanelID, crvFollowCanvas, CRV_W, CRV_H, "Player " + ix.toString() + " - Curve", ['center-top', coffsetX, coffsetY, cautopos]);
+  var crvFollowPanel = mkPanel(crvFollowPanelID, crvFollowCanvas, CRV_W, CRV_H, "Player " + ix.toString() + " - Curve", ['center-top', coffsetX, coffsetY, cautopos], 'xs');
   notationObj['crvFollowPanel'] = crvFollowPanel;
   // </editor-fold>       END NOTATION OBJECT - INIT /////////
 
@@ -416,91 +395,108 @@ function mkNotationObject_runwayCurveFollow(ix, w, h, len, placementOrder /*[#, 
 // </editor-fold> <<<< END NOTATION OBJECT >>>> ---------------------------- //
 
 
-// <editor-fold> <<<< CONTROL PANEL >>>> ----------------------------------- //
+// <editor-fold>  <<<< CONTROL PANEL - CONTROL >>>> ----------------- //
 
-// <editor-fold>       <<<< CONTROL PANEL - INIT >>>> ----------- //
-
-function mkCtrlPanel(panelid, w, h, title) {
-  var tpanel;
-  //Container Div
-  var ctrlPanelDiv = document.createElement("div");
-  ctrlPanelDiv.style.width = w.toString() + "px";
-  ctrlPanelDiv.style.height = h.toString() + "px";
-  ctrlPanelDiv.setAttribute("id", "ctrlPanel");
-  ctrlPanelDiv.style.backgroundColor = "black";
-  var btnW = 44;
-  var btnH = 44;
-  var btnHstr = btnH.toString() + "px";
-  var btnSpace = btnW + 6;
-  // </editor-fold>       END CONTROL PANEL - INIT ////-----////////
-
-  // <editor-fold>     <<<< CONTROL PANEL - GENERATE PIECE >>>> - //
-  var generateNotationButton = document.createElement("BUTTON");
-  generateNotationButton.id = 'generateNotationButton';
-  generateNotationButton.innerText = 'Make Piece';
-  generateNotationButton.className = 'btn btn-1';
-  generateNotationButton.style.width = btnW.toString() + "px";
-  generateNotationButton.style.height = btnHstr;
-  generateNotationButton.style.top = "0px";
-  generateNotationButton.style.left = "0px";
-  generateNotationButton.addEventListener("click", function() {
-    if (activateButtons) {
-      //[ Array of gotime and dur for each part:[gotime,dur] ]
-      var scoreData = generateScoreData(numOfParts, cresDurRangeArr, igapRangeArr, durDeltaAsPercentRangeArr, gapDeltaAsPercentRangeArr, numOfCyclesRangeArr);
-      socket.emit('createEvents', {
-        eventDataArr: scoreData
-      });
-    }
-  });
-  ctrlPanelDiv.appendChild(generateNotationButton);
-  // </editor-fold>       END CONTROL PANEL - GENERATE PIECE //////
-
-  // <editor-fold>     <<<< CONTROL PANEL - LOAD PIECE >>>> ----- //
-  var loadPieceBtn = document.createElement("BUTTON");
-  loadPieceBtn.id = 'loadPieceBtn';
-  loadPieceBtn.innerText = 'Load Piece';
-  loadPieceBtn.className = 'btn btn-1';
-  loadPieceBtn.style.width = btnW.toString() + "px";
-  loadPieceBtn.style.height = btnHstr;
-  loadPieceBtn.style.top = "0px";
-  var tSpace = btnSpace;
-  tSpace = tSpace.toString() + "px";
-  loadPieceBtn.style.left = tSpace;
-  loadPieceBtn.addEventListener("click", function() {
-    if (activateButtons) {
-      // UPLOAD pitchChanges from file ----------------------- //
-      var input = document.createElement('input');
-      input.type = 'file';
-      input.onchange = e => {
-        var reader = new FileReader();
-        reader.readAsText(e.srcElement.files[0]);
-        var me = this;
-        reader.onload = function() {
-          var dataAsText = reader.result;
-          var eventsArray = [];
-          var playersArr = dataAsText.split("!");
-          playersArr.forEach(function(it, ix) {
-            var t1 = it.split(";");
-            var thisPlayersEvents = [];
-            for (var i = 0; i < t1.length; i++) {
-              t2 = [];
-              var temparr = t1[i].split(',');
-              t2.push(parseFloat(temparr[0]));
-              t2.push(parseFloat(temparr[1]));
-              thisPlayersEvents.push(t2);
+function mkCtrlPanel_localCtrl(id, w, h, title, posArr, headerSize) {
+  var panelObj = mkCtrlPanel(id, w, h, title, posArr, headerSize);
+  var panel = panelObj.panel;
+  var canvas = panelObj.canvas;
+  var btnW = w - 15;
+  var btnH = 36;
+  // START BUTTON ////////////////////////
+  var startBtnFunc = function() {
+    if (activateStartBtn) {
+      animationGo = true;
+      startPiece();
+      startBtn.className = 'btn btn-1_inactive';
+      activateStartBtn = false;
+      activatePauseBtn = true;
+      pauseBtn.className = 'btn btn-1';
+      pieceIdPanel.smallify();
+      scoreCtrlLocalPanel.panel.smallify();
+      timeField.disabled = 'true';
+    };
+  }
+  var startBtn = mkButton(canvas, id + 'startbtn', btnW, btnH, 0, 0, 'Start', 12, startBtnFunc);
+  // START TIME ///////////////////////////
+  var timeInputClickFunc = function() {
+    timeField.focus();
+    timeField.select();
+  }
+  var timeInputKeyupFunc = function(e) {
+    if (e.keyCode === 13) {
+      if (activateStartBtn) {
+        timeField.disabled = 'true';
+        var eventsToRmv = [];
+        clockAdj = parseFloat(timeField.value);
+        var frameAdj = Math.round(clockAdj * FRAMERATE);
+        framect = frameAdj;
+        //Clear events that have already passed
+        notationObjects.forEach(function(it, ix) {
+          var tar1 = [];
+          tar1.push(it.ix);
+          var tar2 = [];
+          var t_eventMatrix = eventsForAll[it.ix];
+          for (var i = 0; i < t_eventMatrix.length; i++) {
+            var t_mesh = t_eventMatrix[i][1];
+            var t_time = t_eventMatrix[i][3];
+            //if they had already passed remove the meshes
+            if (t_time > clockAdj) {
+              //need to adjust the remaining event meshes pos.y
+              //because animator uses this to advance events
+              t_mesh.position.y = t_mesh.position.y - (RUNWAY_PXPERFRAME * frameAdj);
+            } else {
+              var obj2Rmv = it.scene.getObjectByName(t_mesh.name);
+              it.conveyor.remove(obj2Rmv);
+              //Collect indexes of events to remove and remove later
+              tar2.push(i);
             }
-            eventsArray.push(thisPlayersEvents);
-          })
-          socket.emit('loadPiece', {
-            eventsArray: eventsArray
-          });
-        }
+          }
+          tar1.push(tar2);
+          eventsToRmv.push(tar1);
+        });
+        //Remove all pased events from eventsMatrix array
+        eventsToRmv.forEach((it, ix) => {
+          var i1 = it[0];
+          var itemsToRmv = it[1];
+          for (var i = itemsToRmv.length - 1; i >= 0; i--) {
+            eventsForAll[i1].splice(itemsToRmv[i], 1);
+          }
+        });
       }
-      input.click();
     }
-  });
-  ctrlPanelDiv.appendChild(loadPieceBtn);
-  // </editor-fold>       END CONTROL PANEL - LOAD PIECE //////////
+  }
+  var timeFieldID = id + 'timeinput';
+  var timeField = mkInputField(canvas, timeFieldID, btnW - 14, 10, 65, 10, 'black', 14, timeInputClickFunc, timeInputKeyupFunc);
+  var timeFieldLbl = mkLabel2(canvas, id + 'timeFieldLbl', timeFieldID, btnW, 13, 18, 10, 'Time Sec:', 11, 'white');
+  // PAUSE BUTTON /////////////////////
+  var pauseBtnFunc = function() {
+    if (activatePauseBtn) {
+      pauseState = (pauseState + 1) % 2;
+      var t_now = new Date(ts.now());
+      var pauseTime = t_now.getTime()
+      if (pauseState == 1) { //Paused
+        pausedTime = pauseTime;
+        animationGo = false;
+        pauseBtn.innerText = 'Resume';
+        pauseBtn.className = 'btn btn-2';
+      } else if (pauseState == 0) { //unpaused
+        var globalPauseTime = pauseTime - pausedTime;
+        timeAdjustment = globalPauseTime + timeAdjustment;
+        pauseBtn.innerText = 'Pause';
+        pauseBtn.className = 'btn btn-1';
+        panel.smallify();
+        animationGo = true;
+        requestAnimationFrame(animationEngine);
+      }
+    }
+  };
+  var pauseBtn = mkButton(canvas, id + 'pausebtn', btnW, btnH, 81, 0, 'Pause', 12, pauseBtnFunc);
+  pauseBtn.className = 'btn btn-1_inactive';
+
+  return panelObj;
+}
+/*
 
   // <editor-fold>     <<<< CONTROL PANEL - START >>>> ---------- //
   var startBtn = document.createElement("BUTTON");
@@ -626,90 +622,11 @@ function mkCtrlPanel(panelid, w, h, title) {
   });
   ctrlPanelDiv.appendChild(saveBtn);
   // </editor-fold>    END CONTROL PANEL - SAVE ////////////////////
-
-  // <editor-fold>     <<<< CONTROL PANEL - CHECKBOXES >>>> - //
-  for (var i = 0; i < 12; i++) {
-    var cbar = [];
-    var cb = document.createElement("input");
-    cb.id = 'cb' + i.toString();
-    cb.type = 'checkbox';
-    cb.value = '0';
-    cb.checked = '';
-    cb.style.width = '15px';
-    cb.style.height = '15px';
-    cb.style.position = 'absolute';
-    cb.style.top = '61px';
-    var tl = 5 + (17 * i);
-    var tl2 = 10 + (17 * i);
-    if (i > 10) {
-      tl = tl + (i - 10) * 5;
-      tl2 = tl2 + (i - 10) * 4;
-    }
-    cb.style.left = tl.toString() + 'px';
-    ctrlPanelDiv.appendChild(cb);
-    cbar.push(cb);
-    var cblbl = document.createElement("label");
-    cblbl.setAttribute("for", 'cb' + i.toString());
-    cblbl.innerHTML = "P" + i.toString();
-    cblbl.style.fontSize = "11px";
-    cblbl.style.color = "white";
-    cblbl.style.fontFamily = "Lato";
-    cblbl.style.position = 'absolute';
-    cblbl.style.top = '77px';
-    cblbl.style.left = tl2.toString() + 'px';
-    ctrlPanelDiv.appendChild(cblbl);
-    cbar.push(cblbl);
-    cbs.push(cbar);
-  }
-
-  // </editor-fold>       END CONTROL PANEL - CHECKBOXES //////
-
-  // <editor-fold>     <<<< CONTROL PANEL - jsPanel >>>> -------- //
-  // jsPanel
-  jsPanel.create({
-    position: 'left-bottom',
-    id: panelid,
-    contentSize: w.toString() + " " + h.toString(),
-    header: 'auto-show-hide',
-    headerControls: {
-      minimize: 'remove',
-      // smallify: 'remove',
-      maximize: 'remove',
-      close: 'remove'
-    },
-    onsmallified: function(panel, status) {
-      var headerY = window.innerHeight - 36;
-      headerY = headerY.toString() + "px";
-      panel.style.top = headerY;
-    },
-    onunsmallified: function(panel, status) {
-      var headerY = window.innerHeight - ctrlPanelH - 34;
-      headerY = headerY.toString() + "px";
-      panel.style.top = headerY;
-    },
-    contentOverflow: 'hidden',
-    headerTitle: '<small>' + title + '</small>',
-    theme: "light",
-    content: ctrlPanelDiv,
-    resizeit: {
-      aspectRatio: 'content',
-      resize: function(panel, paneldata, e) {}
-    },
-    // dragit: {
-    //   disable: true
-    // },
-    callback: function() {
-      tpanel = this;
-    }
-  });
-  return tpanel;
-}
-// </editor-fold>    END CONTROL PANEL - jsPanel ///////////////////
-
-// </editor-fold> END CONTROL PANEL ///////////////////////////////////////////
+*/
+// </editor-fold> END CONTROL PANEL - LOCAL CONTROL //////////////////////////
 
 
-// <editor-fold> <<<< CONTROL PANEL  - GENERATE PARTS >>>> ----------------- //
+// <editor-fold>  <<<< CONTROL PANEL - GENERATE PARTS >>>> ---------------- //
 function mkCtrlPanel_generateParts() {
   var w = 95;
   var h = 170;
@@ -717,7 +634,7 @@ function mkCtrlPanel_generateParts() {
   var canvasID = id + 'canvas';
   var canvasDiv = mkCanvasDiv(canvasID, w, h, 'black')
   var panelid = id + 'panel';
-  var panel = mkPanel(panelid, canvasDiv, w, h, 'Generate Parts', ['left-top', '0px', '100px', 'none']);
+  var panel = mkPanel(panelid, canvasDiv, w, h, 'Generate Parts', ['left-top', '0px', '93px', 'none'], 'xs');
   //Button
   var genPartsBtn = document.createElement("BUTTON");
   genPartsBtn.id = 'genPartsBtn';
@@ -727,8 +644,9 @@ function mkCtrlPanel_generateParts() {
   genPartsBtn.style.height = "30px";
   genPartsBtn.style.top = "120px";
   genPartsBtn.style.left = "0px";
+  // <<<<--- A NUMBER OF START UP FUNCTIONS RUN HERE --->>>>
   genPartsBtn.addEventListener("click", function() {
-    // GENERATE STATIC ELEMENTS ------------------- >
+    // GENERATE PART SCORES W/STATIC ELEMENTS ---- >
     //Based on which player checkboxes are chosen
     cbs.forEach((it, ix) => {
       if (it[0].checked) {
@@ -739,8 +657,9 @@ function mkCtrlPanel_generateParts() {
       var newNO = mkNotationObject_runwayCurveFollow(it, SCENE_W, SCENE_H, RUNWAYLENGTH, [ix, partsToRun.length]);
       notationObjects.push(newNO);
     });
-    //Hide load parts box for good (remove from DOM)
-    //2 control panels: local & networked - Start, Pause, Time, Reload
+    scoreCtrlLocalPanel = mkCtrlPanel_localCtrl('scoreCtrlLocalPanel', 70, 138, 'Local Score Ctrl', ['left-top', '0px', '93px', 'none'], 'xs');
+    // Close this panel
+    panel.close();
   });
   canvasDiv.appendChild(genPartsBtn);
 
@@ -791,7 +710,7 @@ function mkCtrlPanel_generateParts() {
 // </editor-fold> END CONTROL PANEL - GENERATE PARTS //////////////////////////
 
 
-// <editor-fold> <<<< PIECE ID CONTROL PANEL >>>> --------------- //
+// <editor-fold>  <<<< CONTROL PANEL - PIECE ID >>>> ---------------------- //
 function mkPieceIdPanel(title) {
   var w = 136;
   var h = 66;
@@ -799,7 +718,7 @@ function mkPieceIdPanel(title) {
   var canvasID = id + 'canvas';
   var canvasDiv = mkCanvasDiv(canvasID, w, h, 'black')
   var panelid = id + 'panel';
-  var panel = mkPanel(panelid, canvasDiv, w, h, 'Piece ID', ['left-top', '0px', '0px', 'none']);
+  var panel = mkPanel(panelid, canvasDiv, w, h, 'Piece ID', ['left-top', '0px', '0px', 'none'], 'xs');
   var btnW = 120;
   var btnH = 29;
   var btnHstr = btnH.toString() + "px";
@@ -827,15 +746,16 @@ function mkPieceIdPanel(title) {
   pieceIdField.style.top = "25px";
   pieceIdField.style.left = "0px";
   canvasDiv.appendChild(pieceIdField);
+  return panel;
 }
 // </editor-fold> END PIECE ID PANEL ////////////////////////////
 
 
-// <editor-fold> <<<< CLOCK >>>> ------------------------------------------- //
+// <editor-fold>  <<<< CLOCK >>>> ----------------------------------------- //
 
 // <editor-fold>       <<<< FUNCTION CALC CLOCK >>>> -------------- //
 function calcClock(time) {
-  var timeMS = time - startTime;
+  var timeMS = time - startTime + (clockAdj * 1000);
   clockTimeMS = timeMS % 1000;
   clockTimeSec = Math.floor(timeMS / 1000) % 60;
   clockTimeMin = Math.floor(timeMS / 60000) % 60;
@@ -861,7 +781,8 @@ jsPanel.create({
     minimize: 'remove',
     // smallify: 'remove',
     maximize: 'remove',
-    close: 'remove'
+    close: 'remove',
+    size: 'xs'
   },
   contentOverflow: 'hidden',
   headerTitle: '<small>' + 'Clock' + '</small>',
@@ -879,15 +800,7 @@ jsPanel.create({
 // </editor-fold>    END CLOCK ////////////////////////////////////////////////
 
 
-// <editor-fold> <<<< SOCKET IO >>>> --------------------------------------- //
-
-// <editor-fold>       <<<< SOCKET IO - SETUP >>>> -------------- //
-
-// </editor-fold>      END SOCKET IO - SETUP ///////////////////////
-
-
-
-
+// <editor-fold>  <<<< SOCKET IO >>>> ------------------------------------- //
 
 // <editor-fold>       <<<< SOCKET IO - START PIECE >>>> -------- //
 socket.on('startpiecebroadcast', function(data) {
@@ -903,8 +816,6 @@ socket.on('startpiecebroadcast', function(data) {
   }
 });
 // </editor-fold>      END SOCKET IO - START PIECE /////////////////
-
-
 
 // <editor-fold>       <<<< SOCKET IO - PAUSE BROADCAST >>>> ---- //
 socket.on('pauseBroadcast', function(data) {
@@ -928,50 +839,16 @@ socket.on('pauseBroadcast', function(data) {
 });
 // </editor-fold>      END SOCKET IO - PAUSE BROADCAST /////////////
 
-// <editor-fold>       <<<< SOCKET IO - LOAD PIECE >>>> --------- //
-socket.on('loadPieceBroadcast', function(data) {
-  var eventsArray = data.eventsArray;
-  globalScoreData = data.eventsArray;
-  // Generate events for this player from event data here and store in eventsForAll
-  eventsForAll = mkAllEvents(globalScoreData);
-  // GENERATE STATIC ELEMENTS ------------------- >
-  //Based on which player checkboxes are chosen
-  cbs.forEach((it, ix) => {
-    if (it[0].checked) {
-      partsToRun.push(ix);
-    }
-  });
-  partsToRun.forEach((it, ix) => {
-    var newNO = mkNotationObject_runwayCurveFollow(it, SCENE_W, SCENE_H, RUNWAYLENGTH, [ix, partsToRun.length]);
-    notationObjects.push(newNO);
-  });
-  if (startPieceGate) {
-    activateStartBtn = true;
-    activateSaveBtn = true;
-    startBtn.className = 'btn btn-1';
-    saveBtn.className = 'btn btn-1';
-  }
-});
-// </editor-fold>      END SOCKET IO - LOAD PIECE //////////////////
-
 // <editor-fold>       <<<< SOCKET IO - STOP >>>> --------------- //
 socket.on('stopBroadcast', function(data) {
   location.reload();
 });
 // </editor-fold>      END SOCKET IO - STOP ////////////////////////
 
-// <editor-fold>       <<<< SOCKET IO - NEW TEMPO >>>> ---------- //
-socket.on('newTempoBroadcast', function(data) {
-  dials.forEach(function(it, ix) {
-    it.newTempoFunc(data.newTempo);
-  })
-});
-// </editor-fold>      END SOCKET IO - NEW TEMPO ///////////////////
-
 //</editor-fold> END SOCKET IO ////////////////////////////////////////////////
 
 
-// <editor-fold> <<<< ANIMATION FUNCTIONS >>>> ----------------------------- //
+// <editor-fold>  <<<< ANIMATION FUNCTIONS >>>> --------------------------- //
 
 // <editor-fold>        <<<< UPDATE >>>> ----------------------- //
 function update(aMSPERFRAME, currTimeMS) {
@@ -996,7 +873,6 @@ function animationEngine(timestamp) {
   var t_now = new Date(ts.now());
   t_lt = t_now.getTime() - timeAdjustment;
   calcClock(t_lt);
-  // console.log(clockTimeHrs + ":" + clockTimeMin + ":" + clockTimeSec + ":" + clockTimeMS);
   delta += t_lt - lastFrameTimeMs;
   lastFrameTimeMs = t_lt;
   while (delta >= MSPERFRAME) {
@@ -1011,7 +887,7 @@ function animationEngine(timestamp) {
 // </editor-fold> END ANIMATION FUNCTIONS /////////////////////////////////////
 
 
-// <editor-fold> <<<< FUNCTIONS >>>> --------------------------------------- //
+// <editor-fold>  <<<< FUNCTIONS >>>> ------------------------------------- //
 
 // <editor-fold>       <<<< EVENTS - MAKE ALL EVENTS >>>> --------- //
 function mkAllEvents(scoreData) {
@@ -1055,105 +931,21 @@ function mkEvents(eventsData) {
 }
 // </editor-fold>      END EVENTS - MAKE ALL EVENTS //////////////////
 
-// <editor-fold>       <<<< FUNCTION GET ORIGINAL IMAGE SIZE >>>> - //
-function processImg(url) {
-  return new Promise((resolve, reject) => {
-    let img = new Image();
-    img.onload = () => resolve({
-      w: img.width,
-      h: img.height
-    });
-    img.onerror = reject;
-    img.src = url;
-  })
-}
-// </editor-fold>      END FUNCTION GET ORIGINAL IMAGE SIZE //////////
-
-// <editor-fold>       <<<< FUNCTION GET NOTATION SIZES >>>> ------ //
-async function getImgDimensions(urls2DArr, array2DToPopulate) {
-  for (const [ix1, urlSet] of urls2DArr.entries()) {
-    for (const [ix2, url] of urlSet.entries()) {
-      var dimensions = await processImg(url);
-      var sizeArr = [];
-      sizeArr.push(url);
-      sizeArr.push(dimensions.w);
-      sizeArr.push(dimensions.h);
-      array2DToPopulate[ix1].push(sizeArr);
-      if (ix1 == (urls2DArr.length - 1) && ix2 == (urlSet.length - 1)) {
-        activateButtons = true;
-        //make Dial objects and generate static elements
-        makeDials();
-      }
-    }
-  }
-}
-// </editor-fold>      FUNCTION GET NOTATION SIZES ///////////////////
-
-// <editor-fold>       <<<< MAKE SVG CANVAS >>>> ------------------ //
-function mkSVGcanvas(canvasID, w, h) {
-  var tsvgCanvas = document.createElementNS(SVG_NS, "svg");
-  tsvgCanvas.setAttributeNS(null, "width", w);
-  tsvgCanvas.setAttributeNS(null, "height", h);
-  tsvgCanvas.setAttributeNS(null, "id", canvasID);
-  tsvgCanvas.style.backgroundColor = "black";
-  return tsvgCanvas;
-}
-// </editor-fold>      END MAKE SVG CANVAS ///////////////////////////
-
-// <editor-fold>       <<<< MAKE CANVAS DIV >>>> ------------------ //
-function mkCanvasDiv(canvasID, w, h, clr) {
-  var t_div = document.createElement("div");
-  t_div.style.width = w.toString() + "px";
-  t_div.style.height = h.toString() + "px";
-  t_div.style.background = clr;
-  t_div.id = canvasID;
-  return t_div;
-}
-// </editor-fold>      END MAKE CANVAS DIV ///////////////////////////
-
-// <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
-function mkPanel(panelid, svgcanvas, w, h, title, posArr) {
-  var tpanel;
-  var posString = posArr[0];
-  var offsetX = posArr[1];
-  var offsetY = posArr[2];
-  var autoposition = posArr[3];
-  jsPanel.create({
-    // position: 'center-top',
-    //  position: {
-    //     bottom: 50,
-    //     right: 50
-    // },
-    position: {
-      my: posString,
-      at: posString,
-      offsetX: offsetX,
-      offsetY: offsetY,
-      autoposition: autoposition
-    },
-    id: panelid,
-    contentSize: w.toString() + " " + h.toString(),
-    header: 'auto-show-hide',
-    headerControls: {
-      minimize: 'remove',
-      // smallify: 'remove',
-      maximize: 'remove',
-      close: 'remove'
-    },
-    contentOverflow: 'hidden',
-    headerTitle: title,
-    theme: "light",
-    content: svgcanvas, //svg canvas lives here
-    resizeit: {
-      aspectRatio: 'content',
-      resize: function(panel, paneldata, e) {}
-    },
-    callback: function() {
-      tpanel = this;
-    }
-  });
-  return tpanel;
-}
-// </editor-fold>      END MAKE JSPANEL /////////////////////////////
+// <editor-fold>       <<<< THREE.js COLORS >>>> ------------------ //
+var clr_seaGreen = new THREE.Color("rgb(0, 255, 108)");
+var clr_neonMagenta = new THREE.Color("rgb(255, 21, 160)");
+var clr_neonBlue = new THREE.Color("rgb(6, 107, 225)");
+var clr_forest = new THREE.Color("rgb(11, 102, 35)");
+var clr_jade = new THREE.Color("rgb(0, 168, 107)");
+var clr_neonGreen = new THREE.Color("rgb(57, 255, 20)");
+var clr_limegreen = new THREE.Color("rgb(153, 255, 0)");
+var clr_yellow = new THREE.Color("rgb(255, 255, 0)");
+var clr_orange = new THREE.Color("rgb(255, 128, 0)");
+var clr_red = new THREE.Color("rgb(255, 0, 0)");
+var clr_purple = new THREE.Color("rgb(255, 0, 255)");
+var clr_neonRed = new THREE.Color("rgb(255, 37, 2)");
+var clr_safetyOrange = new THREE.Color("rgb(255, 103, 0)");
+var clr_green = new THREE.Color("rgb(0, 255, 0)");
+// </editor-fold>      END THREE.js COLORS ///////////////////////////
 
 // </editor-fold> END FUNCTIONS ///////////////////////////////////////////////

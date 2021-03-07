@@ -422,7 +422,7 @@ function probability(n) {
   return !!n && Math.random() <= n;
 };
 // CONSTRAIN --------------------------------------
-function constrain(num, min, max){
+function constrain(num, min, max) {
   const MIN = min || 1;
   const MAX = max || 20;
   const parsed = parseInt(num)
@@ -430,19 +430,182 @@ function constrain(num, min, max){
 }
 // GET AND PARCE VALUES FROM URL --------------------------------------
 function getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
-    return vars;
+  var vars = {};
+  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+    vars[key] = value;
+  });
+  return vars;
 }
+// <editor-fold>       <<<< MAKE BUTTON >>>> --------------------- //
+function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
+  var btn = document.createElement("BUTTON");
+  btn.className = 'btn btn-1';
+  btn.id = id;
+  btn.innerText = label;
+  btn.style.width = w.toString() + "px";
+  btn.style.height = h.toString() + "px";
+  btn.style.top = top.toString() + "px";
+  btn.style.left = left.toString() + "px";
+  btn.style.fontSize = fontSize.toString() + "px";
+  btn.addEventListener("click", action);
+  canvas.appendChild(btn);
+  return btn;
+}
+// </editor-fold>      END MAKE BUTTON /////////////////////////////
 
+// <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
+function mkPanel(panelid, canvas, w, h, title, posArr, headerSize) {
+  var tpanel;
+  var posString = posArr[0];
+  var offsetX = posArr[1];
+  var offsetY = posArr[2];
+  var autoposition = posArr[3];
+  jsPanel.create({
+    // position: 'center-top',
+    //  position: {
+    //     bottom: 50,
+    //     right: 50
+    // },
+    position: {
+      my: posString,
+      at: posString,
+      offsetX: offsetX,
+      offsetY: offsetY,
+      autoposition: autoposition
+    },
+    id: panelid,
+    contentSize: w.toString() + " " + h.toString(),
+    header: 'auto-show-hide',
+    headerControls: {
+      size: headerSize,
+      minimize: 'remove',
+      maximize: 'remove',
+      close: 'remove'
+    },
+    contentOverflow: 'hidden',
+    headerTitle: title,
+    theme: "light",
+    content: canvas, //svg canvas lives here
+    resizeit: {
+      aspectRatio: 'content',
+      resize: function(panel, paneldata, e) {}
+    },
+    callback: function() {
+      tpanel = this;
+    }
+  });
+  return tpanel;
+}
+// </editor-fold>      END MAKE JSPANEL /////////////////////////////
 
+// <editor-fold>       <<<< MAKE CANVAS DIV >>>> ------------------ //
+function mkCanvasDiv(canvasID, w, h, clr) {
+  var t_div = document.createElement("div");
+  t_div.style.width = w.toString() + "px";
+  t_div.style.height = h.toString() + "px";
+  t_div.style.background = clr;
+  t_div.id = canvasID;
+  return t_div;
+}
+// </editor-fold>      END MAKE CANVAS DIV ///////////////////////////
 
+// <editor-fold>       <<<< MAKE SVG CANVAS >>>> ------------------ //
+function mkSVGcanvas(canvasID, w, h) {
+  var tsvgCanvas = document.createElementNS(SVG_NS, "svg");
+  tsvgCanvas.setAttributeNS(null, "width", w);
+  tsvgCanvas.setAttributeNS(null, "height", h);
+  tsvgCanvas.setAttributeNS(null, "id", canvasID);
+  tsvgCanvas.style.backgroundColor = "black";
+  return tsvgCanvas;
+}
+// </editor-fold>      END MAKE SVG CANVAS ///////////////////////////
 
+// <editor-fold>       <<<< MAKE CONTROL PANEL >>>> ------------------ //
+function mkCtrlPanel(id, w, h, title, posArr, headerSize) { //posArr=all strings:[ left-top, xOffset, yOffset, autoposition]
+  var panelObj = {};
+  panelObj['id'] = id;
+  panelObj['w'] = w;
+  panelObj['h'] = h;
+  var canvasID = id + 'canvas';
+  var canvas = mkCanvasDiv(canvasID, w, h, 'black');
+  panelObj['canvas'] = canvas;
+  var panelID = id + 'panel';
+  var panel = mkPanel(panelID, canvas, w, h, title, posArr, headerSize);
+  panelObj['panel'] = panel;
+  return panelObj;
+}
+// </editor-fold>      END MAKE CONTROL PANEL ///////////////////////////
 
+// <editor-fold>       <<<< MAKE LABEL >>>> --------------------- //
+function mkLabel(canvas, id, top, left, text, fontSize, color) {
+  var lbl = document.createElement("label");
+  lbl.innerHTML = text;
+  lbl.style.fontSize = fontSize.toString() + "px";
+  lbl.style.color = color;
+  lbl.style.fontFamily = "Lato";
+  lbl.style.position = 'absolute';
+  lbl.style.top = top.toString() + 'px';
+  lbl.style.left = left.toString() + 'px';
+  canvas.appendChild(lbl);
+  return lbl;
+}
+function mkLabel2(canvas, id, forid, w, h, top, left, text, fontSize, color) {
+  var lbl = document.createElement("label");
+  lbl.for = 'playerNum';
+  lbl.className = 'input__label input__label--yoshiko';
+  lbl.innerHTML = text;
+  lbl.style.fontSize = fontSize.toString() + "px";
+  lbl.style.color = color;
+  lbl.style.fontFamily = "Lato";
+  lbl.style.position = 'absolute';
+  lbl.style.top = top.toString() + 'px';
+  lbl.style.left = left.toString() + 'px';
+  lbl.style.width = w.toString() + "px";
+  lbl.style.height = h.toString() + "px";
+  canvas.appendChild(lbl);
+  return lbl;
+}
+// </editor-fold>      END MAKE LABEL /////////////////////////////
 
+//<editor-fold>     <<<< INPUT FIELD >>>> ---------- //
+function mkInputField(canvas, id, w, h, top, left, color, fontSize, clickAction, keyupAction) {
+  var inputField = document.createElement("input");
+  inputField.type = 'text';
+  inputField.className = 'input__field--yoshiko';
+  inputField.id = id;
+  inputField.style.width = w.toString() + "px";
+  inputField.style.height = h.toString() + "px";
+  inputField.style.top = top.toString() + "px";
+  inputField.style.left = left.toString() + "px";
+  inputField.style.fontSize = fontSize.toString() + "px";
+  inputField.style.color = color;
+  inputField.addEventListener("click", clickAction);
+  inputField.addEventListener("keyup", keyupAction);
+  canvas.appendChild(inputField);
+  return inputField;
+}
+// </editor-fold>    END INPUT FIELD ///////////////////
 
+// Clone Array
+Array.prototype.clone = function() {
+  function isArr(elm) {
+    return String(elm.constructor).match(/array/i) ? true : false;
+  }
+
+  function cloner(arr) {
+    var arr2 = arr.slice(0),
+        len = arr2.length;
+
+    for (var i = 0; i < len; i++)
+      if (isArr(arr2[i]))
+        arr2[i] = cloner(arr2[i]);
+
+    return arr2;
+  }
+  return cloner(this);
+}
+// Clone
+//var copy = source.clone();
 
 
 

@@ -106,8 +106,8 @@ body {
   /* float: right; */
   /* width: calc(50% - 42px); */
   font-size: 11px;
-  padding: 5px 5px;
-  margin: 11px 11px;
+  padding: 3px 3px;
+  /* margin: 11px 11px; */
   border-radius: 0;
   color: #000000;
   font-weight: 400;
@@ -123,7 +123,7 @@ body {
 .input__label {
 	/* display: inline-block; */
 	/* float: right; */
-	padding: 0 1em;
+	/* padding: 0 1em; */
 	width: 40%;
 	color: #6a7989;
 	font-weight: bold;
@@ -147,7 +147,7 @@ body {
 	/* bottom: 100%; */
 	pointer-events: none;
 	overflow: hidden;
-	padding: 0 1.25em;
+	/* padding: 0 1.25em; */
 	-webkit-transform: translate3d(0, 3em, 0);
 	transform: translate3d(0, 3em, 0);
 	-webkit-transition: -webkit-transform 0.3s;

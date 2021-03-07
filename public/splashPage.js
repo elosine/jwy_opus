@@ -17,7 +17,7 @@ var canvasID = ID + 'canvas';
 var canvas = mkCanvasDiv(canvasID, w, h, 'black');
 // jsPanel ------------------------ >
 var panelID = ID + 'panel';
-var panel = mkPanel(panelID, canvas, w, h, "Score Loader", ['center-top', '0px', '0px', 'none']);
+var panel = mkPanel(panelID, canvas, w, h, "Score Loader", ['center-top', '0px', '0px', 'none'], 'xs');
 // </editor-fold> END GLOBAL VARIABLES ////////////////////////////////////////
 
 
@@ -30,7 +30,6 @@ var genScoreListArray = [
   ['Soundflow #1', function() {}],
   ['Soundflow #2', function() {
     var t_scoreData = generateScoreData_sf002();
-    console.log(t_scoreData);
     socket.emit('mkNewPiece', {
       pieceType: 'sf002',
       pieceName: 'Soundflow #2',
@@ -48,7 +47,6 @@ var genScoreBtn = mkButton(canvas, genScoreBtnID, menuW, btnH, 0, 0, 'Generate S
 // </editor-fold>              END MAKE DROP DOWN ------------------- ////////
 
 
-// <editor-fold>         <<<< FUNCTIONS >>>> ------------------------------- //
 
 // <editor-fold>       <<<< MAKE MENU >>>> ---------------------- //
 function mkMenu(canvas, id, w, h, top, left, listArray) {
@@ -86,83 +84,6 @@ function mkMenu(canvas, id, w, h, top, left, listArray) {
   return menuDiv;
 }
 // </editor-fold>      END MAKE MENU /////////////////////////////
-
-// <editor-fold>       <<<< MAKE BUTTON >>>> --------------------- //
-function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
-  var btn = document.createElement("BUTTON");
-  btn.className = 'btn btn-1';
-  btn.id = id;
-  btn.innerText = label;
-  btn.style.width = w.toString() + "px";
-  btn.style.height = h.toString() + "px";
-  btn.style.top = top.toString() + "px";
-  btn.style.left = left.toString() + "px";
-  btn.style.fontSize = fontSize.toString() + "px";
-  btn.addEventListener("click", action);
-  canvas.appendChild(btn);
-  return btn;
-}
-// </editor-fold>      END MAKE BUTTON /////////////////////////////
-
-// <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
-function mkPanel(panelid, svgcanvas, w, h, title, posArr) {
-  var tpanel;
-  var posString = posArr[0];
-  var offsetX = posArr[1];
-  var offsetY = posArr[2];
-  var autoposition = posArr[3];
-  jsPanel.create({
-    // position: 'center-top',
-    //  position: {
-    //     bottom: 50,
-    //     right: 50
-    // },
-    position: {
-      my: posString,
-      at: posString,
-      offsetX: offsetX,
-      offsetY: offsetY,
-      autoposition: autoposition
-    },
-    id: panelid,
-    contentSize: w.toString() + " " + h.toString(),
-    header: 'auto-show-hide',
-    headerControls: {
-      minimize: 'remove',
-      // smallify: 'remove',
-      maximize: 'remove',
-      close: 'remove'
-    },
-    contentOverflow: 'hidden',
-    headerTitle: title,
-    theme: "light",
-    content: svgcanvas, //svg canvas lives here
-    resizeit: {
-      aspectRatio: 'content',
-      resize: function(panel, paneldata, e) {}
-    },
-    callback: function() {
-      tpanel = this;
-    }
-  });
-  return tpanel;
-}
-// </editor-fold>      END MAKE JSPANEL /////////////////////////////
-
-// <editor-fold>       <<<< MAKE CANVAS DIV >>>> ------------------ //
-function mkCanvasDiv(canvasID, w, h, clr) {
-  var t_div = document.createElement("div");
-  t_div.style.width = w.toString() + "px";
-  t_div.style.height = h.toString() + "px";
-  t_div.style.background = clr;
-  t_div.style.padding = "0px";
-  t_div.style.margin = "0px";
-  t_div.id = canvasID;
-  return t_div;
-}
-// </editor-fold>      END MAKE CANVAS DIV ///////////////////////////
-
-// </editor-fold>              END FUNCTIONS  /////////////////////////////////
 
 
 // <editor-fold>         <<<< SOCKET IO >>>> ------------------------------- //
