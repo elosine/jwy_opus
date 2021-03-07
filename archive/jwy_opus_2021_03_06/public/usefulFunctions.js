@@ -607,43 +607,6 @@ Array.prototype.clone = function() {
 // Clone
 //var copy = source.clone();
 
-// <editor-fold>       <<<< MAKE MENU >>>> ---------------------- //
-function mkMenu(canvas, id, w, h, top, left, listArray) {
-  var menuDiv = document.createElement("div");
-  var menuDivID = id + 'menuDiv';
-  menuDiv.id = menuDivID;
-  menuDiv.className = 'dropdown-content';
-  menuDiv.style.width = w.toString() + "px";
-  menuDiv.style.top = top.toString() + "px";
-  menuDiv.style.left = left.toString() + "px";
-  menuDiv.style.maxHeight = h.toString() + "px";
-  canvas.appendChild(menuDiv);
-  //listArray = [[listLabel, action]]
-  listArray.forEach(function(it, ix) {
-    var tempAtag = document.createElement('a');
-    tempAtag.textContent = it[0];
-    tempAtag.style.fontFamily = "lato";
-    tempAtag.id = id + 'listA' + ix.toString();
-    tempAtag.addEventListener("click", it[1]);
-    menuDiv.appendChild(tempAtag);
-  });
-  // Close the dropdown menu if the user clicks outside of it
-  window.onclick = function(event) {
-    if (!event.target.matches('.btn')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
-      for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
-    }
-  }
-  return menuDiv;
-}
-// </editor-fold>      END MAKE MENU /////////////////////////////
-
 
 
 //

@@ -32,7 +32,7 @@ var clockAdj = 0;
 // SVG ---------------------------- >
 var SVG_NS = "http://www.w3.org/2000/svg";
 // CONTROL PANELS ------------------ >
-var scoreCtrlPanel;
+var scoreCtrlLocalPanel;
 var ctrlPanelH = 95;
 var cbs = []; //checkboxes
 var pieceIdPanel;
@@ -40,7 +40,6 @@ var genPartsPanel;
 // BUTTONS ------------------------ >
 var activateStartBtn = true;
 var activatePauseBtn = false;
-var activateStopBtn = false;
 // START -------------------------- >
 var startPieceGate = true;
 var pauseState = 0;
@@ -396,118 +395,30 @@ function mkNotationObject_runwayCurveFollow(ix, w, h, len, placementOrder /*[#, 
 // </editor-fold> <<<< END NOTATION OBJECT >>>> ---------------------------- //
 
 
-// <editor-fold>  <<<< SOCKET IO >>>> ------------------------------------- //
-
-// <editor-fold>       <<<< SOCKET IO - START TIME >>>> --------- //
-socket.on('startTimeBroadcast', function(data) {
-  clockAdj = data.newStartTime;
-  scoreCtrlPanel.timeField.disabled = 'true';
-  var eventsToRmv = [];
-  var frameAdj = Math.round(clockAdj * FRAMERATE);
-  framect = frameAdj;
-  //Clear events that have already passed
-  notationObjects.forEach(function(it, ix) {
-    var tar1 = [];
-    tar1.push(it.ix);
-    var tar2 = [];
-    var t_eventMatrix = eventsForAll[it.ix];
-    for (var i = 0; i < t_eventMatrix.length; i++) {
-      var t_mesh = t_eventMatrix[i][1];
-      var t_time = t_eventMatrix[i][3];
-      //if they had already passed remove the meshes
-      if (t_time > clockAdj) {
-        //need to adjust the remaining event meshes pos.y
-        //because animator uses this to advance events
-        t_mesh.position.y = t_mesh.position.y - (RUNWAY_PXPERFRAME * frameAdj);
-      } else {
-        var obj2Rmv = it.scene.getObjectByName(t_mesh.name);
-        it.conveyor.remove(obj2Rmv);
-        //Collect indexes of events to remove and remove later
-        tar2.push(i);
-      }
-    }
-    tar1.push(tar2);
-    eventsToRmv.push(tar1);
-  });
-  //Remove all pased events from eventsMatrix array
-  eventsToRmv.forEach((it, ix) => {
-    var i1 = it[0];
-    var itemsToRmv = it[1];
-    for (var i = itemsToRmv.length - 1; i >= 0; i--) {
-      eventsForAll[i1].splice(itemsToRmv[i], 1);
-    }
-  });
-});
-// </editor-fold>      END SOCKET IO - START TIME //////////////////
-
-// <editor-fold>       <<<< SOCKET IO - START PIECE >>>> -------- //
-socket.on('startpiecebroadcast', function(data) {
-  if (startPieceGate) {
-    startPieceGate = false;
-    activateStartBtn = false;
-    activateStopBtn = true;
-    activatePauseBtn = true;
-    animationGo = true;
-    scoreCtrlPanel.stopBtn.className = 'btn btn-1';
-    scoreCtrlPanel.startBtn.className = 'btn btn-1_inactive';
-    scoreCtrlPanel.pauseBtn.className = 'btn btn-1';
-    pieceIdPanel.smallify();
-    scoreCtrlPanel.panel.smallify();
-    scoreCtrlPanel.timeField.disabled = 'true';
-    startPiece();
-  }
-});
-// </editor-fold>      END SOCKET IO - START PIECE /////////////////
-
-// <editor-fold>       <<<< SOCKET IO - PAUSE BROADCAST >>>> ---- //
-socket.on('pauseBroadcast', function(data) {
-  pauseState = data.pauseState;
-  if (pauseState == 0) { //unpaused
-    timeAdjustment = data.pauseTime + timeAdjustment;
-    scoreCtrlPanel.pauseBtn.innerText = 'Pause';
-    scoreCtrlPanel.pauseBtn.className = 'btn btn-1';
-    scoreCtrlPanel.panel.smallify();
-    animationGo = true;
-    requestAnimationFrame(animationEngine);
-  } else if (pauseState == 1) { //paused
-    pausedTime = data.pauseTime
-    animationGo = false;
-    scoreCtrlPanel.pauseBtn.innerText = 'Resume';
-    scoreCtrlPanel.pauseBtn.className = 'btn btn-2';
-  }
-});
-// </editor-fold>      END SOCKET IO - PAUSE BROADCAST /////////////
-
-// <editor-fold>       <<<< SOCKET IO - STOP >>>> --------------- //
-socket.on('stopBroadcast', function(data) {
-  location.reload();
-});
-// </editor-fold>      END SOCKET IO - STOP ////////////////////////
-
-//</editor-fold> END SOCKET IO ////////////////////////////////////////////////
-
-
-// <editor-fold>  <<<< CONTROL PANELS >>>> -------------------------------- //
-
 // <editor-fold>  <<<< CONTROL PANEL - CONTROL >>>> ----------------- //
-function mkCtrlPanel_ctrl(id, w, h, title, posArr, headerSize) {
+
+function mkCtrlPanel_localCtrl(id, w, h, title, posArr, headerSize) {
   var panelObj = mkCtrlPanel(id, w, h, title, posArr, headerSize);
   var panel = panelObj.panel;
   var canvas = panelObj.canvas;
   var btnW = w - 15;
   var btnH = 36;
-
-  // <editor-fold>       <<<< START BUTTON >>>> --------------------- //
+  // START BUTTON ////////////////////////
   var startBtnFunc = function() {
     if (activateStartBtn) {
-      socket.emit('startpiece', {});
-    }
+      animationGo = true;
+      startPiece();
+      startBtn.className = 'btn btn-1_inactive';
+      activateStartBtn = false;
+      activatePauseBtn = true;
+      pauseBtn.className = 'btn btn-1';
+      pieceIdPanel.smallify();
+      scoreCtrlLocalPanel.panel.smallify();
+      timeField.disabled = 'true';
+    };
   }
   var startBtn = mkButton(canvas, id + 'startbtn', btnW, btnH, 0, 0, 'Start', 12, startBtnFunc);
-  panelObj['startBtn'] = startBtn;
-  // </editor-fold>      END START BUTTON ///////////////////////////
-
-  // <editor-fold>       <<<< SET START TIME >>>> ---------------- //
+  // START TIME ///////////////////////////
   var timeInputClickFunc = function() {
     timeField.focus();
     timeField.select();
@@ -515,60 +426,207 @@ function mkCtrlPanel_ctrl(id, w, h, title, posArr, headerSize) {
   var timeInputKeyupFunc = function(e) {
     if (e.keyCode === 13) {
       if (activateStartBtn) {
-        var newStartTime = parseFloat(timeField.value);
-        socket.emit('startTime', {
-          newStartTime: newStartTime,
+        timeField.disabled = 'true';
+        var eventsToRmv = [];
+        clockAdj = parseFloat(timeField.value);
+        var frameAdj = Math.round(clockAdj * FRAMERATE);
+        framect = frameAdj;
+        //Clear events that have already passed
+        notationObjects.forEach(function(it, ix) {
+          var tar1 = [];
+          tar1.push(it.ix);
+          var tar2 = [];
+          var t_eventMatrix = eventsForAll[it.ix];
+          for (var i = 0; i < t_eventMatrix.length; i++) {
+            var t_mesh = t_eventMatrix[i][1];
+            var t_time = t_eventMatrix[i][3];
+            //if they had already passed remove the meshes
+            if (t_time > clockAdj) {
+              //need to adjust the remaining event meshes pos.y
+              //because animator uses this to advance events
+              t_mesh.position.y = t_mesh.position.y - (RUNWAY_PXPERFRAME * frameAdj);
+            } else {
+              var obj2Rmv = it.scene.getObjectByName(t_mesh.name);
+              it.conveyor.remove(obj2Rmv);
+              //Collect indexes of events to remove and remove later
+              tar2.push(i);
+            }
+          }
+          tar1.push(tar2);
+          eventsToRmv.push(tar1);
+        });
+        //Remove all pased events from eventsMatrix array
+        eventsToRmv.forEach((it, ix) => {
+          var i1 = it[0];
+          var itemsToRmv = it[1];
+          for (var i = itemsToRmv.length - 1; i >= 0; i--) {
+            eventsForAll[i1].splice(itemsToRmv[i], 1);
+          }
         });
       }
     }
   }
   var timeFieldID = id + 'timeinput';
   var timeField = mkInputField(canvas, timeFieldID, btnW - 14, 10, 65, 10, 'black', 14, timeInputClickFunc, timeInputKeyupFunc);
-  panelObj['timeField'] = timeField;
   var timeFieldLbl = mkLabel2(canvas, id + 'timeFieldLbl', timeFieldID, btnW, 13, 18, 10, 'Time Sec:', 11, 'white');
-  // </editor-fold>      END SET START TIME /////////////////////////
-
-  // <editor-fold>       <<<< PAUSE BUTTON >>>> ------------------ //
+  // PAUSE BUTTON /////////////////////
   var pauseBtnFunc = function() {
     if (activatePauseBtn) {
       pauseState = (pauseState + 1) % 2;
       var t_now = new Date(ts.now());
       var pauseTime = t_now.getTime()
       if (pauseState == 1) { //Paused
-        socket.emit('pause', {
-          pauseState: pauseState,
-          pauseTime: pauseTime
-        });
+        pausedTime = pauseTime;
+        animationGo = false;
+        pauseBtn.innerText = 'Resume';
+        pauseBtn.className = 'btn btn-2';
       } else if (pauseState == 0) { //unpaused
         var globalPauseTime = pauseTime - pausedTime;
-        socket.emit('pause', {
-          pauseState: pauseState,
-          pauseTime: globalPauseTime
-        });
+        timeAdjustment = globalPauseTime + timeAdjustment;
+        pauseBtn.innerText = 'Pause';
+        pauseBtn.className = 'btn btn-1';
+        panel.smallify();
+        animationGo = true;
+        requestAnimationFrame(animationEngine);
       }
     }
-  }
+  };
   var pauseBtn = mkButton(canvas, id + 'pausebtn', btnW, btnH, 81, 0, 'Pause', 12, pauseBtnFunc);
-  panelObj['pauseBtn'] = pauseBtn;
   pauseBtn.className = 'btn btn-1_inactive';
-  // </editor-fold>      END PAUSE BUTTON ////////////////////////////
-
-  // <editor-fold>       <<<< STOP BUTTON >>>> --------------------- //
-  var stopBtnFunc = function() {
-    if (activateStopBtn) {
-      socket.emit('stop', {});
-    }
-  }
-  var stopBtn = mkButton(canvas, id + 'stopbtn', btnW, btnH, 81 + btnH + 10, 0, 'stop', 12, stopBtnFunc);
-  panelObj['stopBtn'] = stopBtn;
-  stopBtn.className = 'btn btn-1_inactive';
-  // </editor-fold>      END STOP BUTTON ///////////////////////////
 
   return panelObj;
 }
-// </editor-fold> END CONTROL PANEL - CONTROL //////////////////////////
+/*
 
-// <editor-fold>  <<<< CONTROL PANEL - GENERATE PARTS >>>> ---------- //
+  // <editor-fold>     <<<< CONTROL PANEL - START >>>> ---------- //
+  var startBtn = document.createElement("BUTTON");
+  startBtn.id = 'startBtn';
+  startBtn.innerText = 'Start';
+  startBtn.className = 'btn btn-1_inactive';
+  startBtn.style.width = btnW.toString() + "px";
+  startBtn.style.height = btnHstr;
+  startBtn.style.top = "0px";
+  var tSpace = btnSpace * 2;
+  tSpace = tSpace.toString() + "px";
+  startBtn.style.left = tSpace;
+  startBtn.addEventListener("click", function() {
+    if (activateButtons) {
+      if (activateStartBtn) {
+        socket.emit('startpiece', {});
+      }
+    }
+  });
+  ctrlPanelDiv.appendChild(startBtn);
+  // </editor-fold>    END CONTROL PANEL - START ///////////////////
+
+  // <editor-fold>     <<<< CONTROL PANEL - PAUSE >>>> ---------- //
+  var pauseBtn = document.createElement("BUTTON");
+  pauseBtn.id = 'pauseBtn';
+  pauseBtn.innerText = 'Pause';
+  pauseBtn.className = 'btn btn-1_inactive';
+  pauseBtn.style.width = btnW.toString() + "px";
+  pauseBtn.style.height = btnHstr;
+  pauseBtn.style.top = "0px";
+  var tSpace = btnSpace * 3;
+  tSpace = tSpace.toString() + "px";
+  pauseBtn.style.left = tSpace;
+  pauseBtn.addEventListener("click", function() {
+    if (activateButtons) {
+      if (activatePauseStopBtn) {
+        pauseState = (pauseState + 1) % 2;
+        var t_now = new Date(ts.now());
+        var pauseTime = t_now.getTime()
+        if (pauseState == 1) { //Paused
+          socket.emit('pause', {
+            pauseState: pauseState,
+            pauseTime: pauseTime
+          });
+        } else if (pauseState == 0) { //unpaused
+          var globalPauseTime = pauseTime - pausedTime;
+          socket.emit('pause', {
+            pauseState: pauseState,
+            pauseTime: globalPauseTime
+          });
+        }
+      }
+    }
+  });
+  ctrlPanelDiv.appendChild(pauseBtn);
+  // </editor-fold>    END CONTROL PANEL - PAUSE ///////////////////
+
+  // <editor-fold>     <<<< CONTROL PANEL - STOP >>>> ----------- //
+  var stopBtn = document.createElement("BUTTON");
+  stopBtn.id = 'stopBtn';
+  stopBtn.innerText = 'Stop';
+  stopBtn.className = 'btn btn-1_inactive';
+  stopBtn.style.width = btnW.toString() + "px";
+  stopBtn.style.height = btnHstr;
+  stopBtn.style.top = "0px";
+  var tSpace = btnSpace * 4;
+  tSpace = tSpace.toString() + "px";
+  stopBtn.style.left = tSpace;
+  stopBtn.addEventListener("click", function() {
+    if (activateButtons) {
+      if (activatePauseStopBtn) {
+        socket.emit('stop', {});
+      }
+    }
+  });
+  ctrlPanelDiv.appendChild(stopBtn);
+  // </editor-fold>    END CONTROL PANEL - STOP ////////////////////
+
+  // <editor-fold>     <<<< CONTROL PANEL - SAVE >>>> ----------- //
+  var saveBtn = document.createElement("BUTTON");
+  saveBtn.id = 'saveBtn';
+  saveBtn.innerText = 'Save';
+  saveBtn.className = 'btn btn-1_inactive';
+  saveBtn.style.width = btnW.toString() + "px";
+  saveBtn.style.height = btnHstr;
+  saveBtn.style.top = "0px";
+  var tSpace = btnSpace * 5;
+  tSpace = tSpace.toString() + "px";
+  saveBtn.style.left = tSpace;
+  saveBtn.addEventListener("click", function() {
+    if (activateButtons) {
+      if (activateSaveBtn) {
+        var eventDataStr = "";
+        globalScoreData.forEach(function(it, ix) {
+          var eventData = it;
+          for (var i = 0; i < eventData.length; i++) {
+            if (i != (eventData.length - 1)) { //if not last (last item will not have semicolon)
+              for (var j = 0; j < eventData[i].length; j++) {
+                if (j == (eventData[i].length - 1)) {
+                  eventDataStr = eventDataStr + eventData[i][j].toString() + ";"; //semicolon for last one
+                } else {
+                  eventDataStr = eventDataStr + eventData[i][j].toString() + ","; // , for all others
+                }
+              }
+            } else { //last one don't include semicolon
+              for (var j = 0; j < eventData[i].length; j++) {
+                if (j == (eventData[i].length - 1)) {
+                  eventDataStr = eventDataStr + eventData[i][j].toString() + "!";
+                } else {
+                  eventDataStr = eventDataStr + eventData[i][j].toString() + ",";
+                }
+              }
+            }
+          }
+
+        });
+        var t_now = new Date(ts.now());
+        var month = t_now.getMonth() + 1;
+        var eventsFileName = "soundflow2_" + t_now.getFullYear() + "_" + month + "_" + t_now.getUTCDate() + "_" + t_now.getHours() + "-" + t_now.getMinutes();
+        downloadStrToHD(eventDataStr, eventsFileName, 'text/plain');
+      }
+    }
+  });
+  ctrlPanelDiv.appendChild(saveBtn);
+  // </editor-fold>    END CONTROL PANEL - SAVE ////////////////////
+*/
+// </editor-fold> END CONTROL PANEL - LOCAL CONTROL //////////////////////////
+
+
+// <editor-fold>  <<<< CONTROL PANEL - GENERATE PARTS >>>> ---------------- //
 function mkCtrlPanel_generateParts() {
   var w = 95;
   var h = 170;
@@ -576,7 +634,7 @@ function mkCtrlPanel_generateParts() {
   var canvasID = id + 'canvas';
   var canvasDiv = mkCanvasDiv(canvasID, w, h, 'black')
   var panelid = id + 'panel';
-  var panel = mkPanel(panelid, canvasDiv, w, h, 'Generate Parts', ['left-top', '0px', '0px', 'none'], 'xs');
+  var panel = mkPanel(panelid, canvasDiv, w, h, 'Generate Parts', ['left-top', '0px', '93px', 'none'], 'xs');
   //Button
   var genPartsBtn = document.createElement("BUTTON");
   genPartsBtn.id = 'genPartsBtn';
@@ -599,7 +657,7 @@ function mkCtrlPanel_generateParts() {
       var newNO = mkNotationObject_runwayCurveFollow(it, SCENE_W, SCENE_H, RUNWAYLENGTH, [ix, partsToRun.length]);
       notationObjects.push(newNO);
     });
-    scoreCtrlPanel = mkCtrlPanel_ctrl('scoreCtrlPanel', 70, 186, 'Ctrl Panel', ['left-top', '0px', '0px', 'none'], 'xs');
+    scoreCtrlLocalPanel = mkCtrlPanel_localCtrl('scoreCtrlLocalPanel', 70, 138, 'Local Score Ctrl', ['left-top', '0px', '93px', 'none'], 'xs');
     // Close this panel
     panel.close();
   });
@@ -651,7 +709,8 @@ function mkCtrlPanel_generateParts() {
 }
 // </editor-fold> END CONTROL PANEL - GENERATE PARTS //////////////////////////
 
-// <editor-fold>  <<<< CONTROL PANEL - PIECE ID >>>> ---------------- //
+
+// <editor-fold>  <<<< CONTROL PANEL - PIECE ID >>>> ---------------------- //
 function mkPieceIdPanel(title) {
   var w = 136;
   var h = 66;
@@ -659,7 +718,7 @@ function mkPieceIdPanel(title) {
   var canvasID = id + 'canvas';
   var canvasDiv = mkCanvasDiv(canvasID, w, h, 'black')
   var panelid = id + 'panel';
-  var panel = mkPanel(panelid, canvasDiv, w, h, 'Piece ID', ['right-bottom', '0px', '0px', 'none'], 'xs');
+  var panel = mkPanel(panelid, canvasDiv, w, h, 'Piece ID', ['left-top', '0px', '0px', 'none'], 'xs');
   var btnW = 120;
   var btnH = 29;
   var btnHstr = btnH.toString() + "px";
@@ -690,8 +749,6 @@ function mkPieceIdPanel(title) {
   return panel;
 }
 // </editor-fold> END PIECE ID PANEL ////////////////////////////
-
-//</editor-fold> END CONTROL PANELS //////////////////////////////////////////
 
 
 // <editor-fold>  <<<< CLOCK >>>> ----------------------------------------- //
@@ -741,6 +798,54 @@ jsPanel.create({
 });
 
 // </editor-fold>    END CLOCK ////////////////////////////////////////////////
+
+
+// <editor-fold>  <<<< SOCKET IO >>>> ------------------------------------- //
+
+// <editor-fold>       <<<< SOCKET IO - START PIECE >>>> -------- //
+socket.on('startpiecebroadcast', function(data) {
+  if (startPieceGate) {
+    startPieceGate = false;
+    activateStartBtn = false;
+    activatePauseStopBtn = true;
+    controlPanel.smallify();
+    pauseBtn.className = 'btn btn-1';
+    stopBtn.className = 'btn btn-1';
+    startPiece();
+    startBtn.className = 'btn btn-1_inactive';
+  }
+});
+// </editor-fold>      END SOCKET IO - START PIECE /////////////////
+
+// <editor-fold>       <<<< SOCKET IO - PAUSE BROADCAST >>>> ---- //
+socket.on('pauseBroadcast', function(data) {
+  pauseState = data.pauseState;
+  if (pauseState == 0) { //unpaused
+    timeAdjustment = data.pauseTime + timeAdjustment;
+    var btnDOM = document.getElementById('pauseBtn');
+    btnDOM.innerText = 'Pause';
+    btnDOM.className = 'btn btn-1';
+    var ctrlPanelDOM = document.getElementById('ctrlPanel');
+    ctrlPanelDOM.smallify();
+    animationGo = true;
+    requestAnimationFrame(animationEngine);
+  } else if (pauseState == 1) { //paused
+    pausedTime = data.pauseTime
+    animationGo = false;
+    var btnDOM = document.getElementById('pauseBtn');
+    btnDOM.innerText = 'Un-Pause';
+    btnDOM.className = 'btn btn-2';
+  }
+});
+// </editor-fold>      END SOCKET IO - PAUSE BROADCAST /////////////
+
+// <editor-fold>       <<<< SOCKET IO - STOP >>>> --------------- //
+socket.on('stopBroadcast', function(data) {
+  location.reload();
+});
+// </editor-fold>      END SOCKET IO - STOP ////////////////////////
+
+//</editor-fold> END SOCKET IO ////////////////////////////////////////////////
 
 
 // <editor-fold>  <<<< ANIMATION FUNCTIONS >>>> --------------------------- //

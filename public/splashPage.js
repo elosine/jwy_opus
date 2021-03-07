@@ -2,16 +2,18 @@
 // ID ----------------------------- >
 var ID = 'scoreLoader';
 // Measurements ------------------- >
-var w = 300;
+var w = 490;
 var h = 400;
-var menuW = 138;
+var menuW = 146;
 var menuH1 = 132;
-var gap = 8;
-var halfgap = gap / 2;
-var ddMenuLeft_Left = (w / 2) - menuW - halfgap;
-var ddMenuRight_Left = (w / 2) + menuW + halfgap;
+var btnW = menuW;
 var btnH = 35;
-var btnRight_left = (w / 2) - 3;
+var gap = 8;
+var gap2 = 12;
+var H2 = gap + btnH + menuH1;
+var genScoreMenuGate = true;
+var serverScoreMenu;
+var t_scoreData;
 // Canvas ------------------------- >
 var canvasID = ID + 'canvas';
 var canvas = mkCanvasDiv(canvasID, w, h, 'black');
@@ -20,71 +22,66 @@ var panelID = ID + 'panel';
 var panel = mkPanel(panelID, canvas, w, h, "Score Loader", ['center-top', '0px', '0px', 'none'], 'xs');
 // </editor-fold> END GLOBAL VARIABLES ////////////////////////////////////////
 
-
-// <editor-fold>         <<<< MAKE DROP DOWN >>>> -------------------------- //
-// Generate Score Menu --------------- >
-var genScoreBtnID = ID + 'button';
-var genScoreMenuID = ID + 'menu';
-var genScoreMenuTop = gap + btnH;
-var genScoreListArray = [
-  ['Soundflow #1', function() {}],
+// <editor-fold> <<<< GENERATE SCORE >>>> ---------------------------------- //
+// Populate Menu Here
+var genScoreMenuArray = [
   ['Soundflow #2', function() {
-    var t_scoreData = generateScoreData_sf002();
-    socket.emit('mkNewPiece', {
-      pieceType: 'sf002',
-      pieceName: 'Soundflow #2',
-      pieceData: t_scoreData
-    });
-  }],
-  ['Soundflow #3', function() {}]
+    sf2GenScoreMenuFunc()
+  }]
 ];
-
-var genScoreMenu = mkMenu(canvas, genScoreMenuID, menuW, menuH1, genScoreMenuTop, ddMenuLeft_Left, genScoreListArray);
-var genScoreLoadMenuFunc = function() {
+var genScoreMenu = mkMenu(canvas, genScoreMenuID, menuW, menuH1, btnH + gap, 0 + gap, genScoreMenuArray);
+var genScoreBtnFunc = function() {
   genScoreMenu.classList.toggle("show");
 };
-var genScoreBtn = mkButton(canvas, genScoreBtnID, menuW, btnH, 0, 0, 'Generate Score', 14, genScoreLoadMenuFunc);
-// </editor-fold>              END MAKE DROP DOWN ------------------- ////////
+var genScoreBtn = mkButton(canvas, genScoreBtnID, btnW, btnH, 0, 0, 'Generate Score', 14, genScoreBtnFunc);
 
-
-
-// <editor-fold>       <<<< MAKE MENU >>>> ---------------------- //
-function mkMenu(canvas, id, w, h, top, left, listArray) {
-  var menuDiv = document.createElement("div");
-  var menuDivID = id + 'menuDiv';
-  menuDiv.id = menuDivID;
-  menuDiv.className = 'dropdown-content';
-  menuDiv.style.width = w.toString() + "px";
-  menuDiv.style.top = top.toString() + "px";
-  menuDiv.style.left = left.toString() + "px";
-  menuDiv.style.maxHeight = h.toString() + "px";
-  canvas.appendChild(menuDiv);
-  //listArray = [[listLabel, action]]
-  listArray.forEach(function(it, ix) {
-    var tempAtag = document.createElement('a');
-    tempAtag.textContent = it[0];
-    tempAtag.style.fontFamily = "lato";
-    tempAtag.id = id + 'listA' + ix.toString();
-    tempAtag.addEventListener("click", it[1]);
-    menuDiv.appendChild(tempAtag);
-  });
-  // Close the dropdown menu if the user clicks outside of it
-  window.onclick = function(event) {
-    if (!event.target.matches('.btn')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
-      for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
+// <editor-fold>      << GENERATE SCORE - SF2 >>  ///////////////
+var genScoreBtnID = 'genScoreBtn';
+var genScoreMenuID = 'genScoreMenu';
+//RUNS WHEN Soundflow#2 Menu item is chosen
+function sf2GenScoreMenuFunc() {
+  if (genScoreMenuGate) {
+    genScoreMenuGate = false;
+     t_scoreData = generateScoreData_sf002();
+    var saveScoreBtnFunc = function() {
+      saveData(t_scoreData);
     }
+    var saveScoreBtn = mkButton(canvas, 'saveScoreBtn', btnW, btnH, 0, menuW + gap, 'Save Score', 14, saveScoreBtnFunc);
+    var launchScoreBtnFunc = function() {
+      socket.emit('mkNewPiece', {
+        pieceType: 'sf002',
+        pieceName: 'Soundflow #2',
+        pieceData: t_scoreData
+      });
+    }
+    var launchScoreBtn = mkButton(canvas, 'launchScore', btnW, btnH, btnH + gap2, menuW + gap, 'Launch Score', 14, launchScoreBtnFunc);
   }
-  return menuDiv;
 }
-// </editor-fold>      END MAKE MENU /////////////////////////////
+// </editor-fold>     END GENERATE SCORE - SF2  /////////////////
 
+// </editor-fold>  END GENERATE SCORE  ////////////////////////////////////////
+
+// <editor-fold> <<<< LOAD SCORE LOCAL >>>> -------------------------------- //
+var loadScoreListArray = [
+  ['Soundflow #2', function(){loadPiece()}],
+];
+var loadScoreLocalMenu = mkMenu(canvas, 'loadScoreLocalMenu', menuW, menuH1, H2+btnH+gap, gap, loadScoreListArray);
+var loadScoreLoadMenuFunc = function() {
+  loadScoreLocalMenu.classList.toggle("show");
+};
+var loadScoreLocalBtn = mkButton(canvas, 'loadScoreLocalBtn', menuW, btnH, H2, 0, 'Load Score Local', 14, loadScoreLoadMenuFunc);
+// </editor-fold>  END LOAD SCORE LOCAL  //////////////////////////////////////
+
+// <editor-fold> <<<< LOAD SCORE SERVER >>>> ------------------------------- //
+var loadPieceFromServerFunc = function() {
+  socket.emit('loadPieceFromServer', {
+    pieceType: 'sf002',
+    pieceName: 'Soundflow #2',
+    pieceData: t_scoreData
+  });
+}
+var loadPieceFromServerBtn = mkButton(canvas, 'loadPieceFromServerButton', menuW, btnH, H2, menuW + 10, 'Load Score Server', 14, loadPieceFromServerFunc);
+// </editor-fold>  END LOAD SCORE SERVER  /////////////////////////////////////
 
 // <editor-fold>         <<<< SOCKET IO >>>> ------------------------------- //
 
@@ -98,7 +95,6 @@ if (window.location.hostname == 'localhost') {
 var socket = ioConnection;
 // </editor-fold>      END SOCKET IO - SETUP ///////////////////////
 
-
 // <editor-fold>       <<<< SOCKET IO - INIT NEW PIECE >>>> -------------- //
 socket.on('newPieceBroadcast', function(data) {
   var newPieceID = data.newPieceArr[0];
@@ -107,53 +103,64 @@ socket.on('newPieceBroadcast', function(data) {
 });
 // </editor-fold>    END SOCKET IO - INIT NEW PIECE ///////////////////////
 
-
-// <editor-fold>       <<<< SOCKET IO - LOAD PIECE >>>> -------------- //
-// socket.on('loadPieceBroadcast', function(data) {
-//   console.log(data);
-//   //Populate menu with available score data
-//   var pieceDataListDiv = document.createElement("div");
-//   pieceDataListDiv.className = 'dropdown';
-//   canvas.appendChild(pieceDataListDiv);
-//   var pieceDataDropDownListDiv = document.createElement("div");
-//   pieceDataDropDownListDiv.id = 'pieceDataList';
-//   pieceDataDropDownListDiv.className = 'dropdown-content';
-//   var ddw = btnW - 4;
-//   pieceDataDropDownListDiv.style.width = ddw.toString() + "px";
-//   var tlistH = pieceName_IDList.length * listH;
-//   var tlistT = btnH + 17;
-//   pieceDataDropDownListDiv.style.top = tlistT.toString() + "px";
-//   var ddL3 = btnL2 + 10 + btnW + 10;
-//   pieceDataDropDownListDiv.style.left = ddL2.toString() + "px";
-//   pieceDataListDiv.appendChild(pieceDataDropDownListDiv);
-//   var dataIx = 0;
-//   for (const [key, value] of Object.entries(data)) {
-//     console.log(key, value);
-//     var tempAtag = document.createElement('a');
-//     // tempAtag.setAttribute('href', "scores.html");
-//     tempAtag.textContent = value;
-//     tempAtag.style.fontFamily = "lato";
-//     tempAtag.id = 'scoreData' + dataIx.toString();
-//     dataIx++;
-//     tempAtag.addEventListener("click", function() {
-//       if (activateButtons) {
-//
-//       }
-//     });
-//     pieceDataDropDownListDiv.appendChild(tempAtag);
-//     pieceDataAtags.push(tempAtag);
-//   };
-//   pieceDataDropDownListDiv.classList.toggle("show");
-//
-// });
+// <editor-fold>       <<<< SOCKET IO - LOAD PIECE FROM SERVER >>>> ------- //
+socket.on('loadPieceFromServerBroadcast', function(data) {
+  var t_pieceArr = data.availableScoreData;
+  var t_menuArr = [];
+  t_pieceArr.forEach((it, ix) => {
+    var tar = [];
+    tar.push(it);
+    var funtt = function() {
+      socket.emit('loadServerPieceData', {
+        pieceType: 'sf002',
+        pieceName: 'Soundflow #2',
+        fileName: it
+      });
+    };
+    tar.push(funtt);
+    t_menuArr.push(tar);
+  });
+  serverScoreMenu = mkMenu(canvas, 'serverList', (menuW * 2) + 20, menuH1, H2 + btnH + gap, menuW + 18, t_menuArr);
+  serverScoreMenu.classList.toggle("show");
+});
 // </editor-fold>    END SOCKET IO - LOAD PIECE ///////////////////////
 
 //</editor-fold> END SOCKET IO ////////////////////////////////////////////////
 
-
 // <editor-fold>         <<<< SCORE GENERATION >>>> ------------------------ //
 
 // <editor-fold>       <<<< SOUNDFLOW 2 >>>> ---------------- //
+function saveData(a_scoreData) {
+  var eventDataStr = "";
+  a_scoreData.forEach(function(it, ix) {
+    var eventData = it;
+    for (var i = 0; i < eventData.length; i++) {
+      if (i != (eventData.length - 1)) { //if not last (last item will not have semicolon)
+        for (var j = 0; j < eventData[i].length; j++) {
+          if (j == (eventData[i].length - 1)) {
+            eventDataStr = eventDataStr + eventData[i][j].toString() + ";"; //semicolon for last one
+          } else {
+            eventDataStr = eventDataStr + eventData[i][j].toString() + ","; // , for all others
+          }
+        }
+      } else { //last one don't include semicolon
+        for (var j = 0; j < eventData[i].length; j++) {
+          if (j == (eventData[i].length - 1)) {
+            eventDataStr = eventDataStr + eventData[i][j].toString() + "!";
+          } else {
+            eventDataStr = eventDataStr + eventData[i][j].toString() + ",";
+          }
+        }
+      }
+    }
+
+  });
+  var t_now = new Date();
+  var month = t_now.getMonth() + 1;
+  var eventsFileName = "soundflow2_" + t_now.getFullYear() + "_" + month + "_" + t_now.getUTCDate() + "_" + t_now.getHours() + "-" + t_now.getMinutes();
+  downloadStrToHD(eventDataStr, eventsFileName, 'text/plain');
+}
+
 function generateScoreData_sf002() {
   // numOfParts, cresDurRangeArr, igapRangeArr = 4, deltaAsPercentRangeArr, numOfCyclesRangeArr
   //Events have equal length
@@ -207,6 +214,59 @@ function generateScoreData_sf002() {
   }
   return scoreData;
 }
+
+
+
+function loadPiece() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.onchange = e => {
+    var reader = new FileReader();
+    reader.readAsText(e.srcElement.files[0]);
+    var me = this;
+    reader.onload = function() {
+      var dataAsText = reader.result;
+      var eventsArray = [];
+      var playersArr = dataAsText.split("!");
+      playersArr.forEach(function(it, ix) {
+        var t1 = it.split(";");
+        var thisPlayersEvents = [];
+        for (var i = 0; i < t1.length; i++) {
+          t2 = [];
+          var temparr = t1[i].split(',');
+          t2.push(parseFloat(temparr[0]));
+          t2.push(parseFloat(temparr[1]));
+          thisPlayersEvents.push(t2);
+        }
+        eventsArray.push(thisPlayersEvents);
+      })
+      socket.emit('mkNewPiece', {
+        pieceType: 'sf002',
+        pieceName: 'Soundflow #2',
+        pieceData: eventsArray
+      });
+    }
+  }
+  input.click();
+}
+
+
+
+
 // </editor-fold>       END SOUNDFLOW 2 -------------------////////
 
 // </editor-fold>     END SCORE GENERATION ////////////////////////////////////
+
+
+
+
+
+
+
+
+
+// SAMPLE SECTIONERS
+// <editor-fold> <<<< GENERATE SCORE >>>> ---------------------------------- //
+// <editor-fold>      << GENERATE SCORE - SF2 >>  ///////////////
+// </editor-fold>     END GENERATE SCORE - SF2  /////////////////
+// </editor-fold>  END GENERATE SCORE  ////////////////////////////////////////
