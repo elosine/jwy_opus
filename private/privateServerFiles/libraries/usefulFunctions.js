@@ -454,9 +454,7 @@ function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
 // </editor-fold>      END MAKE BUTTON /////////////////////////////
 
 // <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
-function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowresize) {
-  var onwindowresize = a_onwindowresize || false;
-  var headerSize = a_headerSize || 'xs';
+function mkPanel(panelid, canvas, w, h, title, posArr, headerSize) {
   var tpanel;
   var posString = posArr[0];
   var offsetX = posArr[1];
@@ -492,7 +490,7 @@ function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowr
       aspectRatio: 'content',
       resize: function(panel, paneldata, e) {}
     },
-    onwindowresize: onwindowresize,
+    onwindowresize: true,
     callback: function() {
       tpanel = this;
     }

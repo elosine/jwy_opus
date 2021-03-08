@@ -1,14 +1,24 @@
 // MAKE A JSPANEL TO LIST ALL PIECES ------------ >
 var w = 420;
-var h = 400;
+var h = 265;
 var btnH = 40;
 var btnW = 240;
 var btnYgap = btnH + 22;
 var yStart = 35;
 var btnL = 150;
 var cbs = [];
+scoreDataFileName = 'soundflow2_2021_2_19_16_3.txt';
+// <editor-fold>       <<<< SOCKET IO - SETUP >>>> -------------- //
+var ioConnection;
+if (window.location.hostname == 'localhost') {
+  ioConnection = io();
+} else {
+  ioConnection = io.connect(window.location.hostname);
+}
+var socket = ioConnection;
+// </editor-fold>      END SOCKET IO - SETUP ///////////////////////
 var canvas = mkCanvasDiv('cid', w, h, 'black');
-var panel = mkPanel('pid', canvas, w, h, "Soundflow #2 - Score Launcher", ['center-top', '0px', '0px', 'none'], 'xs');
+var panel = mkPanel('pid', canvas, w, h, "Soundflow #2 - Score Launcher", ['center-top', '0px', '0px', 'none'], 'xs', true);
 var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 105, 'Soundflow #2 - Justin Yang', 18, 'rgb(153,255,0)');
 title.style.fontVariant = 'small-caps';
 var launchScoreWithControlsFunc = function() {
@@ -26,8 +36,7 @@ var launchScoreWithControlsFunc = function() {
       partsStr = partsStr + it.toString() + ";";
     }
   });
-  console.log(partsStr);
-  location.href = "/pieces/sf002/sf002_ctrls.html?parts=" + partsStr;
+  location.href = "/pieces/sf002/sf002_ctrls.html?parts=" + partsStr + "&dataFileName=" + scoreDataFileName;
 }
 var launchScoreNoCtlsFunc =
   function() {
@@ -77,3 +86,42 @@ for (var i = 0; i < 12; i++) {
   cbs.push(cbar);
 }
 //</editor-fold> END CHECKBOXES END
+
+//<editor-fold>  < LOAD SCORE FROM SERVER CTRL PANEL >
+// Measurements ------------------- >
+var w2 = 300;
+var h2 = 190;
+var menuW = 280;
+var menuH1 = 132;
+var btnW2 = menuW;
+var btnH2 = 35;
+var gap = 8;
+var H2 = gap + btnH + menuH1;
+var H3 = H2 + gap + btnH + menuH1; //
+var loadCP = mkCtrlPanel('load', w2, h2, 'Ld Dat', ['left-top', '0px', '0px', 'none'], 'xs');
+var loadCanvas = loadCP.canvas;
+
+var loadPieceFromServerFunc = function() {
+  socket.emit('loadPieceFromServer', {});
+}
+var loadPieceFromServerBtn = mkButton(loadCanvas, 'loadPieceFromServerButton', btnW2, btnH2, 0, 0, 'Load Score Server', 14, loadPieceFromServerFunc);
+
+socket.on('loadPieceFromServerBroadcast', function(data) {
+  var t_pieceArr = data.availableScoreDataFiles;
+  var t_menuArr = [];
+  t_pieceArr.forEach((it, ix) => {
+    if (it != '.DS_Store') {
+      var tar = [];
+      tar.push(it);
+      var funtt = function() {
+        scoreDataFileName = it;
+      };
+      tar.push(funtt);
+      t_menuArr.push(tar);
+    }
+  });
+  serverScoreMenu = mkMenu(loadCanvas, 'serverList', menuW, menuH1, btnH2 + gap, gap, t_menuArr);
+  serverScoreMenu.classList.toggle("show");
+});
+loadCP.panel.smallify();
+//</editor-fold> END LOAD SCORE FROM SERVER CTRL PANEL END

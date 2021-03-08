@@ -37,6 +37,7 @@ var animationGo = true;
 var urlArgsDict;
 //</editor-fold> END START UP END
 //<editor-fold>  < GLOBAL VARS - SCORE DATA & EVENTS >   //
+var scoreDataFileName = 'soundflow2_2021_2_19_16_3.txt';
 var partsToRun = [];
 var allScoreData = [];
 var partsToRunData = [];
@@ -69,7 +70,7 @@ var ts = timesync.create({
 4) init() -> run loadScoreData() which loads score data for all 12 parts
 5) loadScoreData() -> extract score data for only the parts you are running store in partsToRunData
 6) loadScoreData() -> generateScoreEvents() events stored in partsToRunEvents
-6) Make NotationObjects and Draw Static Elements
+6) loadScoreData() -> Make NotationObjects (basic graphic framework for each part) and Draw Static Elements
 7) Make Control Panel ***START HERE****
 */
 //<editor-fold>  < INIT() >                              //
@@ -79,7 +80,9 @@ function init() {
   partsStrArray.forEach((it, ix) => {
     partsToRun.push(parseInt(it));
   });
-  allScoreData = loadScoreData('savedScoreData/soundflow2_2021_2_19_16_3.txt');
+  var t_scoreDataFileName = urlArgsDict.dataFileName || scoreDataFileName;
+  var scoreDataFilePath = 'savedScoreData/' + t_scoreDataFileName;
+  allScoreData = loadScoreData(scoreDataFilePath);
 }
 //</editor-fold> END INIT() END
 //</editor-fold> >> END START UP WORKFLOW  ////////////////////////////////////
@@ -102,6 +105,7 @@ async function loadScoreData(path) {
   var retrivedFileDataObj = await retriveFile(path);
   var retrivedFileData = retrivedFileDataObj.fileData;
   var playersArr = retrivedFileData.split("!");
+
   playersArr.forEach(function(it, ix) {
     var t1 = it.split(";");
     var thisPlayersEvents = [];
@@ -128,9 +132,10 @@ async function loadScoreData(path) {
   });
   partsToRunEvents = generateScoreEvents(partsToRunData);
   partsToRun.forEach((it, ix) => {
-      var newNO = mkNotationObject_runwayCurveFollow(it, SCENE_W, SCENE_H, RUNWAYLENGTH, [ix, partsToRun.length]);
-      notationObjects.push(newNO);
-    });
+    var newNO = mkNotationObject_runwayCurveFollow(it, SCENE_W, SCENE_H, RUNWAYLENGTH, [ix, partsToRun.length]);
+    notationObjects.push(newNO);
+  });
+
   return eventsArray;
 }
 
@@ -443,7 +448,6 @@ function mkNotationObject_runwayCurveFollow(ix, w, h, len, placementOrder /*[#, 
     }
   }
   // </editor-fold>    END NOTATION OBJECT - ANIMATE >>>> ----------- //
-
   return notationObj;
 }
 // </editor-fold> <<<< END NOTATION OBJECT >>>> ---------------------------- //
@@ -522,25 +526,6 @@ var clr_green = new THREE.Color("rgb(0, 255, 0)");
 
 
 //</editor-fold>  > END UTILITIES  ////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
