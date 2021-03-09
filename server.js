@@ -12,23 +12,47 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-// TIMESYNC SERVER --------------------------------- >
+// TIMESYNC SERVER -------------- >
 app.use('/timesync', timesyncServer.requestHandler);
-
-// <editor-fold> <<<< SOCKET IO >>>> --------------------------------------- //
+//<editor-fold> << SOCKET IO >> -------------------------------------------- //
 io.on('connection', function(socket) {
-  // <editor-fold>    << INCOMING MSG >>  ////////////////////
-  socket.on('startTime', function(data) {
+  //<editor-fold> << SF002 >> --------------------------------------------- //
+  //<editor-fold>  < START PIECE >                         //
+  socket.on('sf002_startpiece', function(data) {
+    socket.broadcast.emit('sf002_startpiecebroadcast', {});
+    socket.emit('sf002_startpiecebroadcast', {});
+  });
+  //</editor-fold> END START PIECE END
+  //<editor-fold>  < START TIME >                          //
+  socket.on('sf002_startTime', function(data) {
     var newStartTime = data.newStartTime;
-    socket.broadcast.emit('startTimeBroadcast', {
+    socket.broadcast.emit('sf002_startTimeBroadcast', {
       newStartTime: newStartTime
     });
-    socket.emit('startTimeBroadcast', {
+    socket.emit('sf002_startTimeBroadcast', {
       newStartTime: newStartTime
     });
   });
-  // </editor-fold>  END INCOMING MSG  ///////////////////////
-  // <editor-fold>    << INCOMING MSG >>  ////////////////////
+  //</editor-fold> END START TIME END
+  //<editor-fold>  < STOP >                                //
+  socket.on('sf002_stop', function(data) {
+    socket.emit('sf002_stopBroadcast', {});
+    socket.broadcast.emit('sf002_stopBroadcast', {});
+  });
+  //</editor-fold> END STOP END
+  //<editor-fold>  < PAUSE >                               //
+  socket.on('sf002_pause', function(data) {
+    socket.emit('sf002_pauseBroadcast', {
+      pauseState: data.pauseState,
+      pauseTime: data.pauseTime
+    });
+    socket.broadcast.emit('sf002_pauseBroadcast', {
+      pauseState: data.pauseState,
+      pauseTime: data.pauseTime
+    });
+  });
+  //</editor-fold> END PAUSE END
+  //<editor-fold>  < sf002_saveScoreToServer >             //
   socket.on('sf002_saveScoreToServer', function(data) {
     console.log('fdsa');
     var fileName = data.pieceData[0];
@@ -43,12 +67,10 @@ io.on('connection', function(socket) {
       console.log("The file was saved!");
     });
   });
-  // </editor-fold>  END INCOMING MSG  ///////////////////////
-
-
-
+  //</editor-fold> END sf002_saveScoreToServer END
+  //<editor-fold>  < LOAD PIECE FROM SERVER >              //
   // Request for load piece from splash page
-  socket.on('loadPieceFromServer', function(data) {
+  socket.on('sf002_loadPieceFromServer', function(data) {
     //joining path of directory
     const directoryPath = path.join(__dirname, 'public/pieces/sf002/savedScoreData');
     //passsing directoryPath and callback function
@@ -58,31 +80,16 @@ io.on('connection', function(socket) {
         return console.log('Unable to scan directory: ' + err);
       }
       //Send list of files in directory to Splash page
-      socket.broadcast.emit('loadPieceFromServerBroadcast', {
+      socket.broadcast.emit('sf002_loadPieceFromServerBroadcast', {
         availableScoreData: files
       });
-      socket.emit('loadPieceFromServerBroadcast', {
+      socket.emit('sf002_loadPieceFromServerBroadcast', {
         availableScoreDataFiles: files
       });
     });
-
   });
-
-
+  //</editor-fold> END LOAD PIECE FROM SERVER END
+  //</editor-fold> >> END SF002 END  //////////////////////////////////////////
 
 }); // End Socket IO
-// </editor-fold>  END SOCKET IO  ////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-//// SAMPLE SECTIONERS
-// <editor-fold> <<<< GENERATE SCORE >>>> ---------------------------------- //
-// <editor-fold>      << GENERATE SCORE - SF2 >>  ///////////////
-// </editor-fold>     END GENERATE SCORE - SF2  /////////////////
-// </editor-fold>  END GENERATE SCORE  ////////////////////////////////////////
+//</editor-fold> >> END SOCKET IO END  ////////////////////////////////////////
