@@ -8,7 +8,7 @@ var gap = 8;
 var gap2 = 16;
 var H2 = gap + btnH + menuH1;
 var H3 = H2 + gap + btnH + menuH1;
-var fileNameDataArray;
+var filename_DataArray;
 var yStart = 35;
 // SOCKET IO ------------------------- >
 var ioConnection;
@@ -20,27 +20,26 @@ if (window.location.hostname == 'localhost') {
 var socket = ioConnection;
 // CANVAS & PANEL & TITLE
 var canvas = mkCanvasDiv('cid', w, h, 'black');
-var panel = mkPanel('pid', canvas, w, h, "Soundflow #2 - Score Manager", ['center-top', '0px', '0px', 'none'], 'xs');
-var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 23, 'Soundflow #2 - Score Manager', 16, 'rgb(153,255,0)');
+var panel = mkPanel('pid', canvas, w, h, "Soundflow #1 - Score Manager", ['center-top', '0px', '0px', 'none'], 'xs');
+var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 23, 'Soundflow #1 - Score Manager', 16, 'rgb(153,255,0)');
 title.style.fontVariant = 'small-caps';
 //GENERATE SCORE - CAN SAVE TO SERVER OR LOCALLY
-var genScoreBtnFunc = function() {};
 var genScoreBtn = mkButton(canvas, 'genScoreBtn', btnW, btnH, yStart, 8, 'Generate Score', 14, function() {
-  sf2GenScoreMenuFunc()
+  genScoreDataFunc();
 });
 
-function sf2GenScoreMenuFunc() {
-  fileNameDataArray = generateScoreData_sf002();
-  var fileName = fileNameDataArray[0];
-  var t_dataStr = fileNameDataArray[1];
+function genScoreDataFunc() {
+  var filename_DataArray = generateScoreData();
+  var fileName = filename_DataArray[0];
+  var t_dataStr = filename_DataArray[1];
   var saveScoreBtnFunc = function() {
     downloadStrToHD(t_dataStr, fileName, 'text/plain');
   }
   var saveScoreBtn = mkButton(canvas, 'saveScoreBtn', btnW, btnH, yStart + btnH + gap2 + 5, 8, 'Save Score Local', 14, saveScoreBtnFunc);
 
   var saveScoreServerBtnFunc = function() {
-    socket.emit('sf002_saveScoreToServer', {
-      pieceData: fileNameDataArray
+    socket.emit('sf001_saveScoreToServer', {
+      pieceData: filename_DataArray
     });
   }
   var saveScoreServerBtn = mkButton(canvas, 'saveScoreServerBtn', btnW, btnH, yStart + btnH + gap2 + 5 + btnH + gap2 + 5, 8, 'Save Score Server', 14, saveScoreServerBtnFunc);
@@ -63,32 +62,32 @@ function generateScoreData() {
   var bpms = [87, 87, 87, 87];
   var notationUrlsDimensions = [
     [
-      ["/notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
-      ["/notation/eight_accent_1stPartial_27_34.svg", 26, 33],
-      ["/notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
-      ["/notation/quarter_accent_12_35.svg", 12, 35],
-      ["/notation/quadruplet_accent.svg", 44, 34]
+      ["notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
+      ["notation/eight_accent_1stPartial_27_34.svg", 26, 33],
+      ["notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
+      ["notation/quarter_accent_12_35.svg", 12, 35],
+      ["notation/quadruplet_accent.svg", 44, 34]
     ],
     [
-      ["/notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
-      ["/notation/eight_accent_1stPartial_27_34.svg", 26, 33],
-      ["/notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
-      ["/notation/quarter_accent_12_35.svg", 12, 35],
-      ["/notation/quadruplet_accent.svg", 44, 34]
+      ["notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
+      ["notation/eight_accent_1stPartial_27_34.svg", 26, 33],
+      ["notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
+      ["notation/quarter_accent_12_35.svg", 12, 35],
+      ["notation/quadruplet_accent.svg", 44, 34]
     ],
     [
-      ["/notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
-      ["/notation/eight_accent_1stPartial_27_34.svg", 26, 33],
-      ["/notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
-      ["/notation/quarter_accent_12_35.svg", 12, 35],
-      ["/notation/quadruplet_accent.svg", 44, 34]
+      ["notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
+      ["notation/eight_accent_1stPartial_27_34.svg", 26, 33],
+      ["notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
+      ["notation/quarter_accent_12_35.svg", 12, 35],
+      ["notation/quadruplet_accent.svg", 44, 34]
     ],
     [
-      ["/notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
-      ["/notation/eight_accent_1stPartial_27_34.svg", 26, 33],
-      ["/notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
-      ["/notation/quarter_accent_12_35.svg", 12, 35],
-      ["/notation/quadruplet_accent.svg", 44, 34]
+      ["notation/eight_accent_2ndPartial_27_34.svg", 26, 33],
+      ["notation/eight_accent_1stPartial_27_34.svg", 26, 33],
+      ["notation/triplet_accent_1st_partial_45_45.svg", 44, 44],
+      ["notation/quarter_accent_12_35.svg", 12, 35],
+      ["notation/quadruplet_accent.svg", 44, 34]
     ]
   ];
   // notationUrlsDimensions[i], useNotationProbabilities[i], motiveWeightingSets[i]));
@@ -114,38 +113,55 @@ function generateScoreData() {
     }
     scoreData.push(notesArr);
   });
-  return scoreData;
+  var t_dataStr = makeDataString(scoreData);
+
+  console.log(scoreData);
+
+  // Make File Name
+  var name_DataArray = [];
+  var t_now = new Date();
+  var month = t_now.getMonth() + 1;
+  var eventsFileName = "soundflow1_" + t_now.getFullYear() + "_" + month + "_" + t_now.getUTCDate() + "_" + t_now.getHours() + "-" + t_now.getMinutes() + "-" + t_now.getSeconds() + '.txt';
+  // [ fileName, scoreDatArr:[] ]
+  name_DataArray.push(eventsFileName);
+  name_DataArray.push(t_dataStr);
+
+  return name_DataArray;
+
 }
 // </editor-fold>     END DIAL NOTATION OBJECT - GENERATE PIECE new
-
-
 
 function makeDataString(a_scoreData) {
   var eventDataStr = "";
   a_scoreData.forEach(function(it, ix) {
-
     var eventData = it;
     for (var i = 0; i < eventData.length; i++) {
       if (i != (eventData.length - 1)) { //if not last (last item will not have semicolon)
-        for (var j = 0; j < eventData[i].length; j++) {
-          if (j == (eventData[i].length - 1)) {
-            eventDataStr = eventDataStr + eventData[i][j].toString() + ";"; //semicolon for last one
-          } else {
-            eventDataStr = eventDataStr + eventData[i][j].toString() + ","; // , for all others
+        if (eventData[i] == -1) { // -1 means no notation for this tick
+          eventDataStr = eventDataStr + "-1;";
+        } else { // if it has notation
+          for (var j = 0; j < eventData[i].length; j++) {
+            if (j == (eventData[i].length - 1)) {
+              eventDataStr = eventDataStr + eventData[i][j].toString() + ";"; //semicolon for last one
+            } else {
+              eventDataStr = eventDataStr + eventData[i][j].toString() + ","; // , for all others
+            }
           }
         }
       } else { //last one don't include semicolon
-        for (var j = 0; j < eventData[i].length; j++) {
-          if (j == (eventData[i].length - 1)) {
-            //No ! on last part
-            if (ix != (a_scoreData.length - 1)) {
-              eventDataStr = eventDataStr + eventData[i][j].toString() + "!";
-            } else {
+        if (eventData[i] == -1) {
+          eventDataStr = eventDataStr + "-1";
+        } else {
+          for (var j = 0; j < eventData[i].length; j++) {
+            if (j == (eventData[i].length - 1)) {
               eventDataStr = eventDataStr + eventData[i][j].toString();
+            } else {
+              eventDataStr = eventDataStr + eventData[i][j].toString() + ",";
             }
-          } else {
-            eventDataStr = eventDataStr + eventData[i][j].toString() + ",";
           }
+        }
+        if (ix != (a_scoreData.length - 1)) {
+          eventDataStr = eventDataStr + "newPlayerDataSet"; //Mark start of new notation set for next player
         }
       }
     }

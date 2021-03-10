@@ -454,20 +454,16 @@ function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
 // </editor-fold>      END MAKE BUTTON /////////////////////////////
 
 // <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
-function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowresize) {
+function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowresize, a_contentOverflow) {
   var onwindowresize = a_onwindowresize || false;
   var headerSize = a_headerSize || 'xs';
+  var contentOverflow = a_contentOverflow || 'hidden';
   var tpanel;
   var posString = posArr[0];
   var offsetX = posArr[1];
   var offsetY = posArr[2];
   var autoposition = posArr[3];
   jsPanel.create({
-    // position: 'center-top',
-    //  position: {
-    //     bottom: 50,
-    //     right: 50
-    // },
     position: {
       my: posString,
       at: posString,
@@ -484,13 +480,13 @@ function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowr
       maximize: 'remove',
       close: 'remove'
     },
-    contentOverflow: 'hidden',
+    contentOverflow: contentOverflow,
     headerTitle: title,
     theme: "light",
     content: canvas, //svg canvas lives here
     resizeit: {
       aspectRatio: 'content',
-      resize: function(panel, paneldata, e) {}
+      resize: function(panel, paneldata, e) { }
     },
     onwindowresize: onwindowresize,
     callback: function() {

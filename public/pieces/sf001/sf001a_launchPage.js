@@ -5,9 +5,9 @@ var btnH = 40;
 var btnW = 240;
 var btnYgap = btnH + 22;
 var yStart = 35;
-var btnL = 150;
+var btnL = 88;
 var cbs = [];
-scoreDataFileName = 'soundflow2_2021_2_19_16_3.txt';
+var scoreDataFileName = 'flux001_4parts.txt';
 // <editor-fold>       <<<< SOCKET IO - SETUP >>>> -------------- //
 var ioConnection;
 if (window.location.hostname == 'localhost') {
@@ -18,8 +18,8 @@ if (window.location.hostname == 'localhost') {
 var socket = ioConnection;
 // </editor-fold>      END SOCKET IO - SETUP ///////////////////////
 var canvas = mkCanvasDiv('cid', w, h, 'black');
-var panel = mkPanel('pid', canvas, w, h, "Soundflow #2 - Score Launcher", ['center-top', '0px', '0px', 'none'], 'xs', true);
-var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 105, 'Soundflow #2 - Justin Yang', 18, 'rgb(153,255,0)');
+var panel = mkPanel('pid', canvas, w, h, "Soundflow #1a - Score Launcher", ['center-top', '0px', '0px', 'none'], 'xs', true);
+var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 105, 'Soundflow #1a - Justin Yang', 18, 'rgb(153,255,0)');
 title.style.fontVariant = 'small-caps';
 var launchScoreFunc = function() {
   var partsToRun = [];
@@ -40,23 +40,18 @@ var launchScoreFunc = function() {
   // parts = '1;3;6'
   // dataFileName = 'soundflow2_2021_2_19_16_3.txt' //text file on server with score data in it loaded in score page
 
-  location.href = "/pieces/sf002/sf002_ctrls.html?parts=" + partsStr + "&dataFileName=" + scoreDataFileName;
+  location.href = "/pieces/sf001/sf001a.html?parts=" + partsStr + "&dataFileName=" + scoreDataFileName;
 }
 mkButton(canvas, 'ctlsBtn', btnW, btnH, yStart, btnL, 'Launch Score', 14, launchScoreFunc);
 
 //<editor-fold>  < CHECKBOXES >                             //
-for (var i = 0; i < 12; i++) {
+for (var i = 0; i < 4; i++) {
   var cbar = [];
   var tt, tt2, tl, tl2;
   var cbSpace = 35;
   var cbSpace2 = 34;
-  if (i < 6) {
-    tl = 35;
-    tl2 = 18;
-  } else if (i > 5 && i < 12) {
-    tl = 103;
-    tl2 = 77;
-  }
+  tl = 35;
+  tl2 = 18;
   tt = 39 + (cbSpace * (i % 6));
   tt2 = 45 + (cbSpace * (i % 6));
   var cblbl = document.createElement("label");
@@ -101,11 +96,11 @@ var loadCP = mkCtrlPanel('load', w2, h2, 'Ld Dat', ['left-top', '0px', '0px', 'n
 var loadCanvas = loadCP.canvas;
 
 var loadPieceFromServerFunc = function() {
-  socket.emit('sf002_loadPieceFromServer', {});
+  socket.emit('sf001_loadPieceFromServer', {});
 }
 var loadPieceFromServerBtn = mkButton(loadCanvas, 'loadPieceFromServerButton', btnW2, btnH2, 0, 0, 'Load Score Server', 14, loadPieceFromServerFunc);
 
-socket.on('sf002_loadPieceFromServerBroadcast', function(data) {
+socket.on('sf001_loadPieceFromServerBroadcast', function(data) {
   var t_pieceArr = data.availableScoreDataFiles;
   var t_menuArr = [];
   t_pieceArr.forEach((it, ix) => {
