@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg79"
+   viewBox="0 0 1.8 5.2409998"
+   height="9.2099895mm"
+   width="3.1631334mm"
+   version="1.2">
+  <metadata
+     id="metadata85">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs83" />
+  <style
+     id="style63"
+     text="style/css"><![CDATA[
+tspan { white-space: pre; }
+]]></style>
+  <!-- Page: 1/1 -->
+  <text
+     y="-1"
+     x="-1.7521"
+     id="text67"
+     fill="currentColor"
+     text-anchor="start"
+     font-size="2.2001px"
+     font-family="serif"><tspan
+       id="tspan65" /></text>
+  <rect
+     id="rect69"
+     fill="currentColor"
+     ry="0.039999999"
+     height="3.3139"
+     width="0.13"
+     y="1.9271001"
+     x="0.24790001" />
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a73"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quarter_accent.ly:26:14:15"
+     style="color:inherit">
+    <path
+       id="path71"
+       fill="currentColor"
+       d="m -211,88 c -8,2 -14,9 -14,18 0,10 9,19 19,19 2,0 3,-1 4,-1 L 206,19 c 13,0 19,-6 19,-19 0,-13 -6,-19 -19,-19 l -408,-105 c -1,0 -2,-1 -4,-1 -10,0 -19,9 -19,19 0,9 6,16 14,18 L 40,-23 180,0 40,23 Z"
+       transform="matrix(0.004,0,0,-0.004,8.3427,4.3453)" />
+  </a>
+  <a
+     transform="translate(-7.4427,-3.8453)"
+     id="a77"
+     xlink:href="textedit:///Users/jwy/Documents/GitHub/animation_template/public/notation/quarter_accent.ly:26:8:9"
+     style="color:inherit">
+    <path
+       id="path75"
+       fill="currentColor"
+       d="m 218,136 c 55,0 108,-28 108,-89 0,-71 -55,-121 -102,-149 -35,-21 -75,-34 -116,-34 -55,0 -108,28 -108,89 0,71 55,121 102,149 35,21 75,34 116,34 z"
+       transform="matrix(0.004,0,0,-0.004,7.6906,5.5863)" />
+  </a>
+</svg>

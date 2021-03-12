@@ -11,11 +11,17 @@ var panel = mkPanel('pid', canvas, w, h, "Score Loader", ['center-top', '0px', '
 var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 38, 'Justin Wen-Lo Yang - Scores', 18, 'rgb(153,255,0)');
 title.style.fontVariant = 'small-caps';
 var pieceName_btnFunc_Array = [
+  ['Soundflow #1a', function() {
+    location.href = "/pieces/sf001/sf001a_launchPage.html";
+  }],
+  ['Soundflow #1b', function() {
+    location.href = "/pieces/sf001/sf001b_launchPage.html";
+  }],
   ['Soundflow #2', function() {
     location.href = "/pieces/sf002/sf002_launchPage.html";
   }],
-  ['Soundflow #1a', function() {
-    location.href = "/pieces/sf001/sf001a_launchPage.html";
+  ['Soundflow #3', function() {
+    location.href = "/pieces/sf003/sf003_launchPage.html";
   }]
 ];
 //Generate A Button for each Score using forEach piecename,

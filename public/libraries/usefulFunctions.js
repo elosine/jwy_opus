@@ -486,7 +486,7 @@ function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowr
     content: canvas, //svg canvas lives here
     resizeit: {
       aspectRatio: 'content',
-      resize: function(panel, paneldata, e) { }
+      resize: function(panel, paneldata, e) {}
     },
     onwindowresize: onwindowresize,
     callback: function() {
@@ -548,6 +548,7 @@ function mkLabel(canvas, id, top, left, text, fontSize, color) {
   canvas.appendChild(lbl);
   return lbl;
 }
+
 function mkLabel2(canvas, id, forid, w, h, top, left, text, fontSize, color) {
   var lbl = document.createElement("label");
   lbl.for = 'playerNum';
@@ -593,7 +594,7 @@ Array.prototype.clone = function() {
 
   function cloner(arr) {
     var arr2 = arr.slice(0),
-        len = arr2.length;
+      len = arr2.length;
 
     for (var i = 0; i < len; i++)
       if (isArr(arr2[i]))
@@ -689,13 +690,52 @@ function mkClockPanel(clockDiv) {
   return tpanel;
 }
 
+function mkNumbers(size) {
+  var numberArray = [];
+  for (var i = 0; i < size; i++) {
+    numberArray.push(i);
+  }
+  return numberArray;
+}
 
+function mkCascadingSet_wTotal(maxAmt, numEvents){
+  var set = [];
+  var set1 = [];
+  var newMaxAmt = maxAmt;
+  var totalAmt = 0;
+  for(var i=0;i<numEvents;i++){
+    var max = newMaxAmt/(numEvents-i);
+    var min = newMaxAmt/4;
+    var amt = rrand(min, max);
+    totalAmt += amt;
+    set1.push(amt);
+    newMaxAmt = newMaxAmt-amt;
+  }
+  set.push(set1);
+  set.push(totalAmt);
+  return set;
+}
 
+function mkCascadingSet(maxAmt, numEvents){
+  var set = [];
+  var newMaxAmt = maxAmt;
+  for(var i=0;i<numEvents;i++){
+    var max = newMaxAmt/(numEvents-i);
+    var min = newMaxAmt/4;
+    var amt = rrand(min, max);
+    set.push(amt);
+    newMaxAmt = newMaxAmt-amt;
+  }
+  return set;
+}
 
-
-
-
-
+function roundSet(set){
+  var roundedSet = [];
+  set.forEach((item, i) => {
+    roundedSet.push(Math.round(item));
+  });
+  return roundedSet;
+}
 
 
 
