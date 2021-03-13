@@ -263,9 +263,8 @@ function plot(fn, range, width, height) {
   }
   return tpoints;
 }
-Array.prototype.clone = function() {
-  return this.slice(0);
-};
+
+
 //FUNCTION removeDuplicates -------------------------------------------------------- //
 function removeDuplicates(arr) {
   var c;
@@ -345,7 +344,7 @@ function beats2seconds(bpm, numbts) {
 }
 // FUNCTION: singleTempo ------------------------------------------------------------- //
 function singleTempo(tempo, instNum, startTime, endTime, btIncsAr) {
-  var t_btIncsAr = btIncsAr.clone();
+  var t_btIncsAr = btIncsAr.deepCopy();
   t_btIncsAr.unshift(1, 0.25);
   var t_durSec = endTime - startTime;
   var t_durMS = Math.ceil(t_durSec * 1000.0);
@@ -586,26 +585,7 @@ function mkInputField(canvas, id, w, h, top, left, color, fontSize, clickAction,
 }
 // </editor-fold>    END INPUT FIELD ///////////////////
 
-// Clone Array
-Array.prototype.clone = function() {
-  function isArr(elm) {
-    return String(elm.constructor).match(/array/i) ? true : false;
-  }
 
-  function cloner(arr) {
-    var arr2 = arr.slice(0),
-      len = arr2.length;
-
-    for (var i = 0; i < len; i++)
-      if (isArr(arr2[i]))
-        arr2[i] = cloner(arr2[i]);
-
-    return arr2;
-  }
-  return cloner(this);
-}
-// Clone
-//var copy = source.clone();
 
 // <editor-fold>       <<<< MAKE MENU >>>> ---------------------- //
 function mkMenu(canvas, id, w, h, top, left, listArray) {
@@ -690,52 +670,135 @@ function mkClockPanel(clockDiv) {
   return tpanel;
 }
 
-function mkNumbers(size) {
+function mkNumbers(size, start) {
+  var t_start = start || 0;
   var numberArray = [];
   for (var i = 0; i < size; i++) {
-    numberArray.push(i);
+    numberArray.push(i + t_start);
   }
   return numberArray;
 }
 
-function mkCascadingSet_wTotal(maxAmt, numEvents){
+function mkCascadingSet_wTotal(maxAmt, numEvents) {
   var set = [];
   var set1 = [];
   var newMaxAmt = maxAmt;
   var totalAmt = 0;
-  for(var i=0;i<numEvents;i++){
-    var max = newMaxAmt/(numEvents-i);
-    var min = newMaxAmt/4;
+  for (var i = 0; i < numEvents; i++) {
+    var max = newMaxAmt / (numEvents - i);
+    var min = newMaxAmt / 4;
     var amt = rrand(min, max);
     totalAmt += amt;
     set1.push(amt);
-    newMaxAmt = newMaxAmt-amt;
+    newMaxAmt = newMaxAmt - amt;
   }
   set.push(set1);
   set.push(totalAmt);
   return set;
 }
 
-function mkCascadingSet(maxAmt, numEvents){
+function mkCascadingSet(maxAmt, numEvents) {
   var set = [];
   var newMaxAmt = maxAmt;
-  for(var i=0;i<numEvents;i++){
-    var max = newMaxAmt/(numEvents-i);
-    var min = newMaxAmt/4;
+  for (var i = 0; i < numEvents; i++) {
+    var max = newMaxAmt / (numEvents - i);
+    var min = newMaxAmt / 4;
     var amt = rrand(min, max);
     set.push(amt);
-    newMaxAmt = newMaxAmt-amt;
+    newMaxAmt = newMaxAmt - amt;
   }
   return set;
 }
 
-function roundSet(set){
+function roundSet(set) {
   var roundedSet = [];
   set.forEach((item, i) => {
     roundedSet.push(Math.round(item));
   });
   return roundedSet;
 }
+
+function numSort(numArray) {
+  numArray.sort(function(a, b) {
+    return a - b;
+  });
+  return numArray;
+}
+
+// const deepCopy = (arr) => {
+  function deepCopy(arr){
+  let copy = [];
+  arr.forEach(elem => {
+    if(Array.isArray(elem)){
+      copy.push(deepCopy(elem))
+    }else{
+      if (typeof elem === 'object') {
+        copy.push(deepCopyObject(elem))
+    } else {
+        copy.push(elem)
+      }
+    }
+  })
+  return copy;
+}
+
+// Helper function to deal with Objects
+
+// const deepCopyObject = (obj) => {
+function deepCopyObject(obj){
+  let tempObj = {};
+  for (let [key, value] of Object.entries(obj)) {
+    if (Array.isArray(value)) {
+      tempObj[key] = deepCopy(value);
+    } else {
+      if (typeof value === 'object') {
+        tempObj[key] = deepCopyObject(value);
+      } else {
+        tempObj[key] = value
+      }
+    }
+  }
+  return tempObj;
+}
+
+//const array2 = deepCopy(array1);
+
+
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+  var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+
+  return {
+    x: centerX + (radius * Math.cos(angleInRadians)),
+    y: centerY + (radius * Math.sin(angleInRadians))
+  };
+}
+
+function describeArc(x, y, radius, startAngle, endAngle){
+
+    var start = polarToCartesian(x, y, radius, endAngle);
+    var end = polarToCartesian(x, y, radius, startAngle);
+
+    var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+
+    var d = [
+        "M", start.x, start.y,
+        "A", radius, radius, 0, arcSweep, 0, end.x, end.y,
+        // "L", x,y,
+        // "L", start.x, start.y
+    ].join(" ");
+
+    return d;
+}
+
+// document.getElementById("arc1").setAttribute("d", describeArc(200, 400, 100, 0, 220));
+
+
+
+
+
+
+
+
 
 
 
