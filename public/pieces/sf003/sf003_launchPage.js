@@ -1,30 +1,33 @@
-// MAKE A JSPANEL TO LIST ALL PIECES ------------ >
-var w = 420;
-var h = 265;
-var btnH = 40;
-var btnW = 240;
-var btnYgap = btnH + 22;
-var yStart = 35;
-var btnL = 88;
-var cbs = [];
-var scoreDataFileName = 'flux001_4parts.txt';
-// <editor-fold>       <<<< SOCKET IO - SETUP >>>> -------------- //
-var ioConnection;
+//<editor-fold> << GLOBAL VARIABLES >> ------------------------------------- //
+const W = 420;
+const H = 180;
+const BTN_W = 240;
+const BTN_H = 40;
+const TOP = 35;
+const LEFT = 88;
+const BTN_FNT_SZ = 14;
+let checkboxesSet = [];
+let scoreDataFileName = 'default';
+//<editor-fold>  < GLOBAL VARS - SOCKET IO >             //
+let ioConnection;
 if (window.location.hostname == 'localhost') {
   ioConnection = io();
 } else {
   ioConnection = io.connect(window.location.hostname);
 }
-var socket = ioConnection;
-// </editor-fold>      END SOCKET IO - SETUP ///////////////////////
-var canvas = mkCanvasDiv('cid', w, h, 'black');
-var panel = mkPanel('pid', canvas, w, h, "Soundflow #3 - Score Launcher", ['center-top', '0px', '0px', 'none'], 'xs', true);
-var title = mkSpan(canvas, 'mainTitle', w, 24, 8, 105, 'Soundflow #3 - Justin Yang', 18, 'rgb(153,255,0)');
+const SOCKET = ioConnection;
+//</editor-fold> > END GLOBAL VARS - SOCKET IO END
+//</editor-fold> >> END GLOBAL VARIABLES END  /////////////////////////////////
+
+//<editor-fold> << INTERFACE >> -------------------------------------------- //
+let canvas = mkCanvasDiv('cid', W, H, 'black');
+let panel = mkPanel('pid', canvas, W, H, "Soundflow #3 - Score Launcher", ['center-top', '0px', '0px', 'none'], 'xs', true);
+let title = mkSpan(canvas, 'mainTitle', W, 24, 8, 105, 'Soundflow #3 - Justin Yang', 18, 'rgb(153,255,0)');
 title.style.fontVariant = 'small-caps';
-var launchScoreFunc = function() {
-  var partsToRun = [];
-  var partsStr = "";
-  cbs.forEach((it, ix) => {
+let launchScoreFunc = function() {
+  let partsToRun = [];
+  let partsStr = "";
+  checkboxesSet.forEach((it, ix) => {
     if (it[0].checked) {
       partsToRun.push(ix);
     }
@@ -39,22 +42,21 @@ var launchScoreFunc = function() {
   // SCORE PAGE LAUNCHED WITH:
   // parts = '1;3;6'
   // dataFileName = 'soundflow2_2021_2_19_16_3.txt' //text file on server with score data in it loaded in score page
-
-  location.href = "/pieces/sf003/sf003.html?parts=" + partsStr + "&dataFileName=" + scoreDataFileName;
+  location.href = "/pieces/sf003/sf003.html?parts=" + partsStr + "&scoreDataFileName=" + scoreDataFileName;
 }
-mkButton(canvas, 'ctlsBtn', btnW, btnH, yStart, btnL, 'Launch Score', 14, launchScoreFunc);
-
+mkButton(canvas, 'ctlsBtn', BTN_W, BTN_H, TOP, LEFT, 'Launch Score', BTN_FNT_SZ, launchScoreFunc);
 //<editor-fold>  < CHECKBOXES >                             //
-for (var i = 0; i < 4; i++) {
-  var cbar = [];
-  var tt, tt2, tl, tl2;
-  var cbSpace = 35;
-  var cbSpace2 = 34;
+let numCbs = 3;
+for (let i = 0; i < numCbs; i++) {
+  let cbar = [];
+  let tt, tt2, tl, tl2;
+  let cbSpace = 38;
+  let cbSpace2 = 34;
   tl = 35;
   tl2 = 18;
-  tt = 39 + (cbSpace * (i % 6));
-  tt2 = 45 + (cbSpace * (i % 6));
-  var cblbl = document.createElement("label");
+  tt = 42 + (cbSpace * (i % 6));
+  tt2 = 48 + (cbSpace * (i % 6));
+  let cblbl = document.createElement("label");
   cblbl.innerHTML = "P" + i.toString();
   cblbl.style.fontSize = "14px";
   cblbl.style.color = "white";
@@ -64,7 +66,7 @@ for (var i = 0; i < 4; i++) {
   cblbl.style.left = tl2.toString() + 'px';
   canvas.appendChild(cblbl);
 
-  var cb = document.createElement("input");
+  let cb = document.createElement("input");
   cb.id = 'cb' + i.toString();
   cb.type = 'checkbox';
   cb.value = '0';
@@ -77,37 +79,36 @@ for (var i = 0; i < 4; i++) {
   canvas.appendChild(cb);
   cbar.push(cb);
   cbar.push(cblbl);
-  cbs.push(cbar);
+  checkboxesSet.push(cbar);
 }
 //</editor-fold> END CHECKBOXES END
-
 //<editor-fold>  < LOAD SCORE FROM SERVER CTRL PANEL >
 // Measurements ------------------- >
-var w2 = 300;
-var h2 = 190;
-var menuW = 280;
-var menuH1 = 132;
-var btnW2 = menuW;
-var btnH2 = 35;
-var gap = 8;
-var H2 = gap + btnH + menuH1;
-var H3 = H2 + gap + btnH + menuH1; //
-var loadCP = mkCtrlPanel('load', w2, h2, 'Ld Dat', ['left-top', '0px', '0px', 'none'], 'xs');
-var loadCanvas = loadCP.canvas;
+let w2 = 300;
+let h2 = 190;
+let menuW = 280;
+let menuH1 = 132;
+let btnW2 = menuW;
+let btnH2 = 35;
+let gap = 8;
+let H2 = gap + BTN_H + menuH1;
+let H3 = H2 + gap + BTN_H + menuH1; //
+let loadCP = mkCtrlPanel('load', w2, h2, 'Load Score Data From Server Panel', ['left-top', '0px', '0px', 'none'], 'xs');
+let loadCanvas = loadCP.canvas;
 
-var loadPieceFromServerFunc = function() {
-  socket.emit('sf003_loadPieceFromServer', {});
+let loadPieceFromServerFunc = function() {
+  SOCKET.emit('sf003_loadPieceFromServer', {});
 }
-var loadPieceFromServerBtn = mkButton(loadCanvas, 'loadPieceFromServerButton', btnW2, btnH2, 0, 0, 'Load Score Server', 14, loadPieceFromServerFunc);
+let loadPieceFromServerBtn = mkButton(loadCanvas, 'loadPieceFromServerButton', btnW2, btnH2, 0, 0, 'Load Score Server', 14, loadPieceFromServerFunc);
 
-socket.on('sf003_loadPieceFromServerBroadcast', function(data) {
-  var t_pieceArr = data.availableScoreDataFiles;
-  var t_menuArr = [];
+SOCKET.on('sf003_loadPieceFromServerBroadcast', function(data) {
+  let t_pieceArr = data.availableScoreDataFiles;
+  let t_menuArr = [];
   t_pieceArr.forEach((it, ix) => {
     if (it != '.DS_Store') {
-      var tar = [];
+      let tar = [];
       tar.push(it);
-      var funtt = function() {
+      let funtt = function() {
         scoreDataFileName = it;
       };
       tar.push(funtt);
@@ -119,3 +120,4 @@ socket.on('sf003_loadPieceFromServerBroadcast', function(data) {
 });
 loadCP.panel.smallify();
 //</editor-fold> END LOAD SCORE FROM SERVER CTRL PANEL END
+//</editor-fold> >> END INTERFACE END  ////////////////////////////////////////

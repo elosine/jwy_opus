@@ -1,3 +1,96 @@
+//<editor-fold> << DEFAULT SCORE DATA >> ----------------------------------- //
+let defaultScoreData = {
+  "0": {
+    "numRings": 4,
+    "numEvents": 4,
+    "eventDurs": [7, 6, 4, 2],
+    "gaps": [10, 9, 9, 9],
+    "partScoreData": [
+      [60, [
+        [10, 17, 0],
+        [26, 32, 1],
+        [41, 45, 0],
+        [54, 56, 1]
+      ]],
+      [53, [
+        [9, 13, 1],
+        [22, 28, 0],
+        [36, 39, 0],
+        [48, 50, 0]
+      ]],
+      [44, [
+        [8, 11, 1],
+        [20, 24, 0],
+        [31, 34, 0],
+        [40, 42, 1]
+      ]],
+      [34, [
+        [6, 8, 0],
+        [15, 18, 0],
+        [22, 25, 1],
+        [31, 33, 1]
+      ]]
+    ]
+  },
+  "1": {
+    "numRings": 5,
+    "numEvents": 2,
+    "eventDurs": [9, 7],
+    "gaps": [16, 9],
+    "partScoreData": [
+      [60, [
+        [16, 25, 0],
+        [34, 41, 1]
+      ]],
+      [57, [
+        [16, 25, 0],
+        [34, 41, 0]
+      ]],
+      [49, [
+        [13, 20, 1],
+        [29, 36, 0]
+      ]],
+      [42, [
+        [12, 18, 1],
+        [25, 32, 0]
+      ]],
+      [35, [
+        [9, 14, 0],
+        [21, 26, 0]
+      ]]
+    ]
+  },
+  "2": {
+    "numRings": 3,
+    "numEvents": 3,
+    "eventDurs": [9, 6, 8],
+    "gaps": [9, 9, 6],
+    "partScoreData": [
+      [60, [
+        [9, 18, 1],
+        [27, 33, 1],
+        [39, 47, 1]
+      ]],
+      [52, [
+        [9, 16, 0],
+        [23, 28, 0],
+        [34, 40, 1]
+      ]],
+      [39, [
+        [8, 13, 1],
+        [17, 21, 1],
+        [26, 30, 0]
+      ]]
+    ]
+  }
+}
+
+// let newScoreDat = sf003_generateScoreData();
+// let newScoreDatStr = JSON.stringify(newScoreDat);
+// console.log(newScoreDat);
+// console.log(newScoreDatStr);
+//</editor-fold> >> END DEFAULT SCORE DATA END  ///////////////////////////////
+
 //<editor-fold> << GLOBAL VARIABLES >> ------------------------------------- //
 //<editor-fold>  < GLOBAL VARS - TIMING >                //
 const FRAMERATE = 60.0;
@@ -27,9 +120,8 @@ let stopBtn_isActive = false;
 let piece_canStart = true;
 //</editor-fold> END GLOBAL VARS - GATES END
 //<editor-fold>  < GLOBAL VARS - PIECE DATA & VARS>            //
-let scoreDataFileName = 'flux001_4parts.txt';
 let partsToRun = [];
-let allScoreData = [];
+let allScoreData = defaultScoreData;
 let partsToRunData = [];
 let notationObjects = [];
 let numDials = 4;
@@ -66,34 +158,36 @@ const SOCKET = ioConnection;
 //</editor-fold> > END GLOBAL VARS - SOCKET IO END
 //</editor-fold> >> END GLOBAL VARIABLES END  /////////////////////////////////
 
-//<editor-fold> << START UP WORKFLOW >> ------------------------------------ //
-//<editor-fold>  < WORKFLOW >                            //
-/*
-1) init() is run from the html page->body <body onload='init();'>
-2) init() runs getUrlArgs() to get args from URL
-3) init() Get parts to run from urlArgsDict populate partsToRun array
-4) init() -> run loadScoreData() which loads score data for all 12 parts
-5) loadScoreData() -> extract score data for only the parts you are running store in partsToRunData
-6) loadScoreData() -> Make NotationObjects (basic graphic framework for each part) and Draw Static Elements
-7) loadScoreData() -> Make Control Panel
-*/
-//</editor-fold> END WORKFLOW END
-//<editor-fold>  < INIT() >                              //
+//<editor-fold> << START UP >> --------------------------------------------- //
 function init() {
+  // GET URL ARGS ---------------------------- >
   urlArgsDict = getUrlArgs();
+  // DETERMINE PARTS TO RUN ---------------- >
   let partsStrArray = urlArgsDict.parts.split(';');
   partsStrArray.forEach((it, ix) => {
     partsToRun.push(parseInt(it));
   });
-  let t_scoreDataFileName = urlArgsDict.dataFileName || scoreDataFileName;
-  let scoreDataFilePath = 'savedScoreData/' + t_scoreDataFileName;
+  // LOAD SCORE DATA ---------------- >
+  let fromURLarg_scoreDataFileName = urlArgsDict.scoreDataFileName || 'default';
+  // if no scoreDataFileName is provided thru the URLargs, the defaultScoreData (above) will be used
+  // if scoreDataFile name is provided the loadScoreData function is run
+  if (fromURLarg_scoreDataFileName != 'default') {
+    let scoreDataFilePath = 'savedScoreData/' + fromURLarg_scoreDataFileName;
+    loadScoreData(scoreDataFilePath);
+    // All loadScoreData() is asynchronous, so all subsequent steps are run
+    // from loadScoreData() after scoreDataFile load
+  } else{ //using the built in defaultScoreData if no data file is specified
+    partsToRun.forEach((numOfPart, partsToRunIX) => {
+      let partNum_str = numOfPart.toString();
+      let newNO = mkNotationObject(numOfPart, ring0W, ring0H, allScoreData[partNum_str], [partsToRunIX, partsToRun.length] /*[#, ofTotal]*/ );
+      notationObjects.push(newNO);
+    });
+    startPiece();
+  }
 
-  //// <- TEMP -> ////
-  notationObjects.push(mkNotationObject(0, ring0W, ring0H, defaultScoreData['0'], [0, 1] /*[#, ofTotal]*/ ));
-  startPiece();
+
 }
-//</editor-fold> END INIT() END
-//</editor-fold> >> END START UP WORKFLOW  ////////////////////////////////////
+//</editor-fold> >> END START UP END //////////////////////////////////////////
 
 //<editor-fold> << SCORE DATA & EVENTS >> ---------------------------------- //
 function retriveFile(path) {
@@ -112,34 +206,16 @@ async function loadScoreData(path) {
   let eventsArray = [];
   let retrivedFileDataObj = await retriveFile(path);
   let retrivedFileData = retrivedFileDataObj.fileData;
-  let playersArr = retrivedFileData.split("newPlayerDataSet");
-  playersArr.forEach(function(it, ix) {
-    let t1 = it.split(";");
-    let thisPlayersEvents = [];
-    for (let i = 0; i < t1.length; i++) {
-      if (t1[i] == -1) {
-        thisPlayersEvents.push(-1);
-      } else {
-        t2 = [];
-        let temparr = t1[i].split(',');
-        t2.push(temparr[0]);
-        t2.push(parseInt(temparr[1]));
-        t2.push(parseInt(temparr[2]));
-        thisPlayersEvents.push(t2);
-      }
-    }
-    eventsArray.push(thisPlayersEvents);
-  });
+  allScoreData = JSON.parse(retrivedFileData);
 
-  partsToRun.forEach((it, ix) => {
-    let newNO = mkNotationObject(it, ringW, ringH, numTicksPerDial[it], bpms[it], eventsArray[it], [ix, partsToRun.length]);
+  partsToRun.forEach((numOfPart, partsToRunIX) => {
+    let partNum_str = numOfPart.toString();
+    let newNO = mkNotationObject(numOfPart, ring0W, ring0H, allScoreData[partNum_str], [partsToRunIX, partsToRun.length] /*[#, ofTotal]*/ );
     notationObjects.push(newNO);
   });
-  scoreCtrlPanel = mkCtrlPanel_ctrl('scoreCtrlPanel', 70, 162, 'Ctrl Panel', ['left-top', '0px', '0px', 'none'], 'xs');
-
-  return eventsArray;
+  startPiece();
+  // scoreCtrlPanel = mkCtrlPanel_ctrl('scoreCtrlPanel', 70, 162, 'Ctrl Panel', ['left-top', '0px', '0px', 'none'], 'xs');
 }
-
 
 //</editor-fold> >> END SCORE DATA & EVENTS END  //////////////////////////////
 
@@ -167,7 +243,7 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
   // << MEASUREMENTS -------------- >
   let cx = w / 2;
   let cy = h / 2;
-  let pad = 16;
+  let pad = 13;
   let r1 = (w / 2) - pad;
   let circumferenceOG = 2 * Math.PI * r1;
   let circumference1Sec = circumferenceOG / 60;
@@ -210,7 +286,6 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
   let lastRingIX = numRings - 1;
   let lastRingRadius = ringRadii[lastRingIX];
   let lastRingCY = ringCYs[lastRingIX];
-  let greenFilter = document.getElementById('neongreen');
   // << CANVAS -------------------- >
   let canvasID = id + 'canvas';
   let canvas = mkSVGcanvas(canvasID, w, h);
@@ -250,7 +325,6 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
       let arcType = startStopSecondsArr[2];
       thisRing_arcTypes.push(arcType);
       let arcClr = arcType == 0 ? 'magenta' : clr_neonGreen;
-      let arcFilter = arcType == 0 ? 'url(#magenta)' : 'url(#neonblue)';
       // << << ARCS PROPER -------------------- >
       let arc = document.createElementNS(SVG_NS, "path");
       arc.setAttributeNS(null, "d", describeArc(cx, thisRing_cy, thisRing_radius, arcStartDeg, arcStopDeg)); //describeArc makes 12'0clock =0degrees
@@ -289,8 +363,8 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
     dial.setAttributeNS(null, "stroke-width", dialStrokeWidth);
     dial.setAttributeNS(null, "stroke-linecap", 'round');
     if (ringix == 0) {
-        dial.setAttributeNS(null, 'filter', 'url(#neonyellow)');
-      }
+      dial.setAttributeNS(null, 'filter', 'url(#neonyellow)');
+    }
     let dialID = id + 'dial' + ringix;
     dial.setAttributeNS(null, "id", dialID);
     canvas.appendChild(dial);
@@ -412,7 +486,7 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
   var accelNotationSVG = document.createElementNS(SVG_NS, "image");
   accelNotationSVG.setAttributeNS(XLINK_NS, 'xlink:href', "notation/accel_feathered_84_40.svg");
   let notationY = lastRingCY - 20;
-  let notationX = accelRectX + 2;
+  let notationX = cx - (decelRectW/2) - 42 - (eventFollowerPadding/2);
   accelNotationSVG.setAttributeNS(null, "transform", "translate( " + notationX.toString() + "," + notationY.toString() + ")");
   let notationSVGID = id + 'accelNotationSVG';
   accelNotationSVG.setAttributeNS(null, "id", notationSVGID);
@@ -421,7 +495,7 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
   let decelNotationSVG = document.createElementNS(SVG_NS, "image");
   decelNotationSVG.setAttributeNS(XLINK_NS, 'xlink:href', "notation/decel_feathered_81_40.svg");
   let dnotationY = lastRingCY - 20;
-  let dnotationX = decelRectX + 2;
+  let dnotationX = cx + (decelRectW/2) - 40 + (eventFollowerPadding/2);
   decelNotationSVG.setAttributeNS(null, "transform", "translate( " + dnotationX.toString() + "," + dnotationY.toString() + ")");
   let dnotationSVGID = id + 'decelNotationSVG';
   decelNotationSVG.setAttributeNS(null, "id", dnotationSVGID);
@@ -447,7 +521,7 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
       ringArcs[currRing].forEach((arc, arcix) => {
         arc.setAttributeNS(null, 'filter', 'none');
       });
-        dials[currRing].setAttributeNS(null, 'filter', 'none');
+      dials[currRing].setAttributeNS(null, 'filter', 'none');
       //Rings will go from first to last and back then in random order
       if (cycleCt < initialRingOrderSet.length) {
         currRing = initialRingOrderSet[cycleCt];
@@ -688,250 +762,7 @@ var clr_turquoise = "#30D5C8";
 //</editor-fold> END UTILITIES - COLORS END
 //</editor-fold>  > END UTILITIES  ////////////////////////////////////////////
 
-//<editor-fold> << SCORE DATA GENERATION >> -------------- --------------- //
-//<editor-fold>  < SCORE DATA GENERATION - ALGORITHM >   //
-/*
-3 Parts each with sets of cascading rings each smaller than the next.
-There will be 4 - 6 cascading rings per part.
-There are 60, 1 second segments in the largest ring.
-Each largest ring will have between 2 and 4 events.
-Events are either acceleration or deceleration chosen randomly.
-Events will collectively last max 18-24 seconds decided randomly
-Make event durations as follows:
-1st event will be a duration between maxDur/numEvents, and half this number
-Next event will be remainingMaxDur/remainingNumEvents, and 25% this number and so on
-Randomly distribute the events in the cycle with initial minGap=3sec. no events should overlap
-All subsequent rings will have random segments removed.
-The smallest ring will be no smaller than 1/3 the original ring.
-Use the above method to calculate the number of segments to remove each subsequent ring
-The segments to be removed will be calculated randomly and those actual segments should be removed each ring
-If there is an event during that segment, the event will be shortened, if rest, the rest shortened
-In performance, the first part of the piece should be from largest ring to smallest ring and back,but then after this, next rings can be chosen at random
-*/
-// var sd = sf003_generateScoreData();
-// console.log(sd);
-// console.log(JSON.stringify(sd));
-//</editor-fold> END SCORE DATA GENERATION - ALGORITHM END
-function sf003_generateScoreData() {
-  let numParts = 3;
-  let scoreData = {};
-  //Obj for each part
-  for (let i = 0; i < numParts; i++) {
-    scoreData[i.toString()] = {};
-  }
-  //Make data for each part
-  for (let i = 0; i < numParts; i++) {
-    let itos = i.toString();
-    let t_partObj = scoreData[itos];
-    // Decide # cascading rings
-    let numCascadingRings = rrandInt(3, 5);
-    t_partObj['numRings'] = numCascadingRings;
-    // Decide # Events
-    let numEvents = rrandInt(2, 4);
-    t_partObj['numEvents'] = numEvents;
-    // Decide event durations
-    let maxDurEvents = rrandInt(21, 33);
-    let eventDursSet = mkCascadingSet_wTotal(maxDurEvents, numEvents);
-    let eventDurs = roundSet(eventDursSet[0]);
-    let totalEventDurs = Math.round(eventDursSet[1]);
-    t_partObj['eventDurs'] = eventDurs;
-    //Decide Event Gaps
-    let maxAllGaps = 60 - totalEventDurs;
-    let gaps = roundSet(mkCascadingSet(maxAllGaps, numEvents));
-    t_partObj['gaps'] = gaps;
-    //Decide segments to eliminate for each subsequent ring
-    let maxSegmentsToDelete = 30;
-    let numSegmentsToDeleteSet = roundSet(mkCascadingSet(maxSegmentsToDelete, numCascadingRings - 1));
-    let segments = mkNumbers(60);
-    let secToDel = [];
-    numSegmentsToDeleteSet.forEach((it, ix) => { //set of num of segments to delete per ring
-      let tar = [];
-      for (let k = 0; k < it; k++) { // iterate it number of segments
-        let segToDel = choose(segments);
-        tar.push(segToDel);
-        segments.forEach((it, ix) => { //remove from segments
-          segToDel == it && segments.splice(ix, 1); //remove from segments
-        });
-      }
-      secToDel.push(tar);
-    });
-    //Make [startDeg,stopDeg] sets for each arc in 1st ring
-    let ring1ArcsArray = [];
-    let degCt = 0;
-    for (let j = 0; j < numEvents; j++) {
-      let startStopDegs = [];
-      let startDeg = degCt + gaps[j];
-      degCt += gaps[j];
-      startStopDegs.push(startDeg);
-      let stopDeg = degCt + eventDurs[j];
-      degCt += eventDurs[j];
-      startStopDegs.push(stopDeg);
-      //Decide if accel/deceleration
-      startStopDegs.push(flipCoin());
-      ring1ArcsArray.push(startStopDegs);
-    }
-    //make an array of 60 numbers assigned to gap or event
-    //take away seconds from each subsequent ring
-    //make new sets using ix[0] and ix[last]
-    let gapsEventsArray = [];
-    let idx = 0;
-    for (let j = 0; j < gaps.length; j++) {
-      gapsEventsArray.push(mkNumbers(gaps[j], idx));
-      idx = idx + gaps[j];
-      gapsEventsArray.push(mkNumbers(eventDurs[j], idx));
-      idx = idx + eventDurs[j];
-    }
-    //flatten and sort segments to delete array for each ring
-    let allSecsToDelPerRing = [];
-    for (let j = 0; j < secToDel.length; j++) {
-      let ogArL = secToDel.length - 1;
-      let ringSecsToDel = deepCopy(secToDel);
-      ringSecsToDel.splice(j, ogArL - j);
-      ringSecsToDel = ringSecsToDel.flat(2);
-      numSort(ringSecsToDel);
-      allSecsToDelPerRing.push(ringSecsToDel);
-    }
-    //Remove segments for each ring and generate new array:
-    //[ numSecsInRing, arcsStartStop:[start, stop] ] //will need to increase speed for each subsequent ring based on new ring duration
-    let allRingsNewArcs = [];
-    let tempRingArr = [];
-    tempRingArr.push(60);
-    tempRingArr.push(ring1ArcsArray);
-    allRingsNewArcs.push(tempRingArr); // [ numSecsInRing, arcsStartStop:[start, stop] ]
-    allSecsToDelPerRing.forEach((it, ix) => {
-      let t_newRingLenSec = 60 - it.length;
-      let tempRingArr = [];
-      tempRingArr.push(t_newRingLenSec);
-      let newGapsEventsArray = deepCopy(gapsEventsArray);
-      it.forEach((it4, ix4) => { //segments to delete for each ring
-        newGapsEventsArray.forEach((it2, ix2) => {
-          it2.forEach((it3, ix3) => {
-            if (it4 == it3) { //it4=secToDel; it3=gapOReventSec
-              it2.splice(ix3, 1);
-            }
-          });
-        });
-      });
-      let t_ct = 0;
-      let newRingArcs = [];
-      let tstart, tstop;
-      newGapsEventsArray.forEach((it31, ix31) => {
-        if ((ix31 % 2) == 0) {
-          t_ct = t_ct + it31.length;
-          tstart = t_ct;
-        } else {
-          t_ct = t_ct + it31.length;
-          tstop = t_ct;
-          let tar9 = [];
-          tar9.push(tstart);
-          tar9.push(tstop);
-          //Decide if accel/deceleration
-          tar9.push(flipCoin());
-          newRingArcs.push(tar9)
-        }
-      });
-      tempRingArr.push(newRingArcs);
-      allRingsNewArcs.push(tempRingArr); // [ numSecsInRing, arcsStartStopType:[start, stop, type] ]
-    });
-    t_partObj['partScoreData'] = allRingsNewArcs;
-  }
-  return scoreData;
-
-}
-//</editor-fold> >> END SCORE DATA GENERATION END  ////////////////////////////
-
-//<editor-fold> << DEFAULT SCORE DATA >> ----------------------------------- //
-let defaultScoreData = {
-  "0": {
-    "numRings": 4,
-    "numEvents": 4,
-    "eventDurs": [7, 6, 4, 2],
-    "gaps": [10, 9, 9, 9],
-    "partScoreData": [
-      [60, [
-        [10, 17, 0],
-        [26, 32, 1],
-        [41, 45, 0],
-        [54, 56, 1]
-      ]],
-      [53, [
-        [9, 13, 1],
-        [22, 28, 0],
-        [36, 39, 0],
-        [48, 50, 0]
-      ]],
-      [44, [
-        [8, 11, 1],
-        [20, 24, 0],
-        [31, 34, 0],
-        [40, 42, 1]
-      ]],
-      [34, [
-        [6, 8, 0],
-        [15, 18, 0],
-        [22, 25, 1],
-        [31, 33, 1]
-      ]]
-    ]
-  },
-  "1": {
-    "numRings": 5,
-    "numEvents": 2,
-    "eventDurs": [9, 7],
-    "gaps": [16, 9],
-    "partScoreData": [
-      [60, [
-        [16, 25, 0],
-        [34, 41, 1]
-      ]],
-      [57, [
-        [16, 25, 0],
-        [34, 41, 0]
-      ]],
-      [49, [
-        [13, 20, 1],
-        [29, 36, 0]
-      ]],
-      [42, [
-        [12, 18, 1],
-        [25, 32, 0]
-      ]],
-      [35, [
-        [9, 14, 0],
-        [21, 26, 0]
-      ]]
-    ]
-  },
-  "2": {
-    "numRings": 3,
-    "numEvents": 3,
-    "eventDurs": [9, 6, 8],
-    "gaps": [9, 9, 6],
-    "partScoreData": [
-      [60, [
-        [9, 18, 1],
-        [27, 33, 1],
-        [39, 47, 1]
-      ]],
-      [52, [
-        [9, 16, 0],
-        [23, 28, 0],
-        [34, 40, 1]
-      ]],
-      [39, [
-        [8, 13, 1],
-        [17, 21, 1],
-        [26, 30, 0]
-      ]]
-    ]
-  }
-}
-
-// let newScoreDat = sf003_generateScoreData();
-// let newScoreDatStr = JSON.stringify(newScoreDat);
-// console.log(newScoreDat);
-// console.log(newScoreDatStr);
-//</editor-fold> >> END DEFAULT SCORE DATA END  ///////////////////////////////
+//SCORE DATA GENERATOR LIVES IN private/privateServerFiles/pieces/sf003/sf003_manageScoreData.js
 
 
 
@@ -940,6 +771,21 @@ let defaultScoreData = {
 
 
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 //// SAMPLE SECTIONERS
 //<editor-fold> << ANIMATION ENGINE >> ------------------------------------- //

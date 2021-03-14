@@ -456,7 +456,8 @@ function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
 // </editor-fold>      END MAKE BUTTON /////////////////////////////
 
 // <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
-function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowresize, a_contentOverflow) {
+function mkPanel(panelid, canvas, w, h, title, a_posArr, a_headerSize, a_onwindowresize, a_contentOverflow) {
+  let posArr = a_posArr || ['center-top', '0px', '0px', 'none'];
   let onwindowresize = a_onwindowresize || false;
   let headerSize = a_headerSize || 'xs';
   let contentOverflow = a_contentOverflow || 'hidden';
