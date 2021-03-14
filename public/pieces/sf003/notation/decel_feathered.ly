@@ -1,7 +1,8 @@
-\version "2.18.2"
+
+\version "2.20.0"
 
 \paper{
-  paper-width =50
+  paper-width =100
   paper-height = 50
 }
 
@@ -25,16 +26,18 @@
       }
 
       {
-        \time 1/4
+        \time 2/4
         \override TupletBracket.bracket-visibility = ##t
         %S\set tupletFullLength = ##t
-        \override NoteHead.font-size = #-1
-        \override Stem.details.beamed-lengths = #'(5)
-        \override Stem.details.lengths = #'(5)
-              \stopStaff
+       % \override NoteHead.font-size = #-1
+        \override Stem.details.beamed-lengths = #'(5.5)
+        %\override Stem.details.lengths = #'(5)
+        \stopStaff
 
-        %\once \override TupletNumber #'text = "7:4"
-        \tuplet 3/2 {e''8-> e'' e''}
+        \override Beam.grow-direction = #LEFT
+        \featherDurations #(ly:make-moment 9/5)
+       { c64[ c c c c  ] }
+       
       }
 
     >>
@@ -42,7 +45,8 @@
     \layout{
       \context {
         \Score
-        %proportionalNotationDuration = #(ly:make-moment 1/128)
+       %proportionalNotationDuration = #(ly:make-moment 1/128)
+       proportionalNotationDuration = #(ly:make-moment 1/100)
         \override SpacingSpanner.uniform-stretching = ##t
         \override SpacingSpanner.strict-note-spacing = ##t
         \override SpacingSpanner.strict-grace-spacing = ##t
@@ -52,7 +56,7 @@
       }
 
       indent = 0
-      line-width = 50
+      line-width = 100
     }
 
     \midi{}

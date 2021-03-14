@@ -144,7 +144,7 @@ async function loadScoreData(path) {
     var tar = [];
     eventsArray.forEach((it2, ix2) => {
       if (it == ix2) {
-        var tar2 = it2.clone();
+        var tar2 = deepCopy(it2);
         tar.push(it);
         tar.push(tar2);
         partsToRunData.push(tar);

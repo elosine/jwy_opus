@@ -4,13 +4,13 @@ function clamp(num, min, max) {
 }
 // FUNCTION: mtof -------------------------------------------------- //
 function mtof(midinote) {
-  var freq;
+  let freq;
   freq = Math.pow(2, ((midinote - 69) / 12)) * 440;
   return freq;
 }
 // FUNCTION: ftom -------------------------------------------------- //
 function ftom(freq) {
-  var midi;
+  let midi;
   midi = (Math.log2((freq / 440)) * 12) + 69;
   return midi;
 }
@@ -20,8 +20,8 @@ function rrand(min, max) {
 }
 // FUNCTION: rrandInt ---------------------------------------------- //
 function rrandInt(min, max) {
-  var tmin = min - 0.4999999;
-  var tmax = max + 0.4999999;
+  let tmin = min - 0.4999999;
+  let tmax = max + 0.4999999;
   return Math.round(Math.random() * (tmax - tmin) + tmin);
 }
 // FUNCTION: rrandInt ---------------------------------------------- //
@@ -30,7 +30,7 @@ function rrandIntFloor(min, max) {
 }
 // FUNCTION: rrand ------------------------------------------------- //
 function choose(tempSet) {
-  var randpick = rrandIntFloor(0, tempSet.length);
+  let randpick = rrandIntFloor(0, tempSet.length);
   return tempSet[randpick];
 }
 // FUNCTION: scale -------------------------------------------------- //
@@ -51,27 +51,27 @@ function shuffle(array) {
 }
 // FUNCTION: chooseWeighted -----------------------------------
 function chooseWeighted(items, chances) {
-  var sum = chances.reduce((acc, el) => acc + el, 0);
-  var acc = 0;
+  let sum = chances.reduce((acc, el) => acc + el, 0);
+  let acc = 0;
   chances = chances.map(el => (acc = el + acc));
-  var rand = Math.random() * sum;
+  let rand = Math.random() * sum;
   return items[chances.filter(el => el <= rand).length];
 }
 // FUNCTION: palindromeTimeContainers -----------------------------------
 function palindromeTimeContainers(dur, minval, maxval, pctmin, pctmax) {
-  var timeCont = [];
-  var currtime = 0;
-  var newdur = dur;
-  var newminval = minval;
+  let timeCont = [];
+  let currtime = 0;
+  let newdur = dur;
+  let newminval = minval;
   while (newdur > (dur / 2)) {
-    var tc = newminval;
+    let tc = newminval;
     timeCont.push(currtime);
     currtime = currtime + tc;
     newdur = newdur - tc;
     newminval = Math.min((newminval * (1 + rrand(pctmin, pctmax))), maxval);
   }
   while (newdur >= 0) {
-    var tc = newminval;
+    let tc = newminval;
     timeCont.push(currtime);
     currtime = currtime + tc;
     newdur = newdur - tc;
@@ -81,12 +81,12 @@ function palindromeTimeContainers(dur, minval, maxval, pctmin, pctmax) {
 }
 // FUNCTION: array3dtoString -----------------------------------
 function array3dtoString(arr) {
-  var tempstr = "";
-  for (var i = 0; i < arr.length; i++) {
-    var tempstr1 = "";
-    for (var j = 0; j < arr[i].length; j++) {
-      var tempstr2 = "";
-      for (var k = 0; k < arr[i][j].length; k++) {
+  let tempstr = "";
+  for (let i = 0; i < arr.length; i++) {
+    let tempstr1 = "";
+    for (let j = 0; j < arr[i].length; j++) {
+      let tempstr2 = "";
+      for (let k = 0; k < arr[i][j].length; k++) {
         if (k == 0) {
           tempstr2 = arr[i][j][k].toString();
         } else {
@@ -119,8 +119,8 @@ function sortFunction2DArray(a, b) {
 }
 // FUNCTION: findIndicesOfMax -----------------------------------
 function findIndicesOfMax(inp, count) {
-  var outp = [];
-  for (var i = 0; i < inp.length; i++) {
+  let outp = [];
+  for (let i = 0; i < inp.length; i++) {
     outp.push(i); // add index to output array
     if (outp.length > count) {
       outp.sort(function(a, b) {
@@ -134,7 +134,7 @@ function findIndicesOfMax(inp, count) {
 // FUNCTION: downloadStrToHD -----------------------------------
 // download('the content of the file', 'filename.txt', 'text/plain');
 function downloadStrToHD(strData, strFileName, strMimeType) {
-  var D = document,
+  let D = document,
     A = arguments,
     a = D.createElement("a"),
     d = A[0],
@@ -145,7 +145,7 @@ function downloadStrToHD(strData, strFileName, strMimeType) {
   a.href = "data:" + strMimeType + "charset=utf-8," + escape(strData);
 
   if (window.MSBlobBuilder) { // IE10
-    var bb = new MSBlobBuilder();
+    let bb = new MSBlobBuilder();
     bb.append(strData);
     return navigator.msSaveBlob(bb, strFileName);
   } /* end if(window.MSBlobBuilder) */
@@ -155,7 +155,7 @@ function downloadStrToHD(strData, strFileName, strMimeType) {
     a.innerHTML = "downloading...";
     D.body.appendChild(a);
     setTimeout(function() {
-      var e = D.createEvent("MouseEvents");
+      let e = D.createEvent("MouseEvents");
       e.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
       a.dispatchEvent(e);
       D.body.removeChild(a);
@@ -164,7 +164,7 @@ function downloadStrToHD(strData, strFileName, strMimeType) {
   }; /* end if('download' in a) */
 
   //do iframe dataURL download: (older W3)
-  var f = D.createElement("iframe");
+  let f = D.createElement("iframe");
   D.body.appendChild(f);
   f.src = "data:" + (A[2] ? A[2] : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
   setTimeout(function() {
@@ -174,8 +174,8 @@ function downloadStrToHD(strData, strFileName, strMimeType) {
 }
 
 function scrambleCount(numtocount) {
-  var scrambledCt = [];
-  for (var i = 0; i < numtocount; i++) {
+  let scrambledCt = [];
+  for (let i = 0; i < numtocount; i++) {
     scrambledCt.push(i);
   }
   for (let i = scrambledCt.length - 1; i > 0; i--) {
@@ -191,42 +191,42 @@ function rads(deg) {
 
 function roundByStep(value, step) {
   step || (step = 1.0);
-  var inv = 1.0 / step;
+  let inv = 1.0 / step;
   return Math.round(value * inv) / inv;
 }
 //FUNCTION floorByStep --------------------------------------------------------------------- //
 function floorByStep(value, step) {
   step || (step = 1.0);
-  var inv = 1.0 / step;
+  let inv = 1.0 / step;
   return Math.floor(value * inv) / inv;
 }
 //FUNCTION plot --------------------------------------------------------------------- //
 function midiToSpeed(ogmidi, destmidi) {
-  var tspeed = Math.pow(2, (destmidi - ogmidi) * (1.0 / 12.0));
+  let tspeed = Math.pow(2, (destmidi - ogmidi) * (1.0 / 12.0));
   return tspeed;
 }
 //FUNCTION plot --------------------------------------------------------------------- //
 function limitRange(num, min, max) {
-  var tnewval;
+  let tnewval;
   tnewval = Math.min(num, max);
   tnewval = Math.max(tnewval, min);
   return tnewval;
 }
 //FUNCTION plot --------------------------------------------------------------------- //
 function stringTo3DFloatArray(text) {
-  var pitchesArray1 = [];
-  var t1 = text.split(":");
-  for (var i = 0; i < t1.length; i++) {
-    var temparr = t1[i].split(';');
-    var t3 = [];
-    for (var j = 0; j < temparr.length; j++) {
-      var temparr2 = temparr[j].split("&");
-      var t4 = [];
-      for (var k = 0; k < temparr2.length; k++) {
+  let pitchesArray1 = [];
+  let t1 = text.split(":");
+  for (let i = 0; i < t1.length; i++) {
+    let temparr = t1[i].split(';');
+    let t3 = [];
+    for (let j = 0; j < temparr.length; j++) {
+      let temparr2 = temparr[j].split("&");
+      let t4 = [];
+      for (let k = 0; k < temparr2.length; k++) {
         t4.push(temparr2[k].split(","));
       }
-      var tnewFloatArr = [];
-      for (var l = 0; l < t4.length; l++) {
+      let tnewFloatArr = [];
+      for (let l = 0; l < t4.length; l++) {
         tnewFloatArr.push(parseFloat(t4[l]));
       }
       t3.push(tnewFloatArr);
@@ -237,25 +237,25 @@ function stringTo3DFloatArray(text) {
 }
 //FUNCTION plot --------------------------------------------------------------------- //
 function distributeOverRange(min, max, numVals) {
-  var trange = max - min;
-  var tinc = trange / numVals;
-  var tvals = [];
-  for (var i = 0; i < numVals; i++) {
+  let trange = max - min;
+  let tinc = trange / numVals;
+  let tvals = [];
+  for (let i = 0; i < numVals; i++) {
     tvals.push(min + rrand((i * tinc), ((i + 1) * tinc)));
   }
   return tvals;
 }
 //FUNCTION plot --------------------------------------------------------------------- //
 function plot(fn, range, width, height) {
-  var tpoints = [];
-  var widthScale = (width / (range[1] - range[0]));
-  var heightScale = (height / (range[3] - range[2]));
-  var first = true;
-  for (var x = 0; x < width; x++) {
-    var xFnVal = (x / widthScale) - range[0];
-    var yGVal = (fn(xFnVal) - range[2]) * heightScale;
+  let tpoints = [];
+  let widthScale = (width / (range[1] - range[0]));
+  let heightScale = (height / (range[3] - range[2]));
+  let first = true;
+  for (let x = 0; x < width; x++) {
+    let xFnVal = (x / widthScale) - range[0];
+    let yGVal = (fn(xFnVal) - range[2]) * heightScale;
     yGVal = height - yGVal; // 0,0 is top-left
-    var tar = {};
+    let tar = {};
     tar.x = x;
     tar.y = yGVal;
     first = false;
@@ -267,10 +267,10 @@ function plot(fn, range, width, height) {
 
 //FUNCTION removeDuplicates -------------------------------------------------------- //
 function removeDuplicates(arr) {
-  var c;
-  var len = arr.length;
-  var result = [];
-  var obj = {};
+  let c;
+  let len = arr.length;
+  let result = [];
+  let obj = {};
   for (c = 0; c < len; c++) {
     obj[arr[c]] = 0;
   }
@@ -280,12 +280,12 @@ function removeDuplicates(arr) {
   return result;
 }
 //TIMEDISPLAY ------------------------------------------------------------------------ //
-var objToday = new Date(),
+let objToday = new Date(),
   weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
   dayOfWeek = weekday[objToday.getDay()],
   dayNum = objToday.getDay() + 1,
   domEnder = function() {
-    var a = objToday;
+    let a = objToday;
     if (/1/.test(parseInt((a + "").charAt(0)))) return "th";
     a = parseInt((a + "").charAt(1));
     return 1 == a ? "st" : 2 == a ? "nd" : 3 == a ? "rd" : "th"
@@ -301,13 +301,13 @@ var objToday = new Date(),
   curMeridiem = objToday.getHours() > 12 ? "PM" : "AM";
 //FUNCTION pad -------------------------------------------------------------- //
 function pad(num, size) {
-  var s = "000000000" + num;
+  let s = "000000000" + num;
   return s.substr(s.length - size);
 }
 //FUNCTION playsamp ----------------------------------------------------------------- //
 function playSamp(audioContext, path, rate) {
-  var source = audioContext.createBufferSource();
-  var request = new XMLHttpRequest();
+  let source = audioContext.createBufferSource();
+  let request = new XMLHttpRequest();
   request.open('GET', path, true);
   request.responseType = 'arraybuffer';
   request.onload = function() {
@@ -338,28 +338,28 @@ function isNonEmptyArrayLike(obj) {
 }
 // FUNCTION: beats2seconds ----------------------------------------------------------- //
 function beats2seconds(bpm, numbts) {
-  var t_secPerBeat = 1.0 / (bpm / 60.0);
-  var t_sec = t_secPerBeat * numbts;
+  let t_secPerBeat = 1.0 / (bpm / 60.0);
+  let t_sec = t_secPerBeat * numbts;
   return t_sec;
 }
 // FUNCTION: singleTempo ------------------------------------------------------------- //
 function singleTempo(tempo, instNum, startTime, endTime, btIncsAr) {
-  var t_btIncsAr = btIncsAr.deepCopy();
+  let t_btIncsAr = btIncsAr.deepCopy();
   t_btIncsAr.unshift(1, 0.25);
-  var t_durSec = endTime - startTime;
-  var t_durMS = Math.ceil(t_durSec * 1000.0);
-  var t_beatNum = 0;
-  var t_lastBeatTcSec = 0;
-  var t_btsFloat = 0.0;
-  var t_btsPerMs = tempo / 60000.0;
+  let t_durSec = endTime - startTime;
+  let t_durMS = Math.ceil(t_durSec * 1000.0);
+  let t_beatNum = 0;
+  let t_lastBeatTcSec = 0;
+  let t_btsFloat = 0.0;
+  let t_btsPerMs = tempo / 60000.0;
   // Initial Events @ 0 /////////////////////////////////////////
   eventSet.push([startTime, instNum, 8, -1]); //inital event marker
   eventSet.push([startTime, instNum, 0, -1]); //inital beat marker
-  var t_btIncsTcSec = [];
-  var t_numIncs = [];
-  var t_incCtr = [];
+  let t_btIncsTcSec = [];
+  let t_numIncs = [];
+  let t_incCtr = [];
   if (isNonEmptyArrayLike(t_btIncsAr)) {
-    for (var i = 0; i < t_btIncsAr.length; i++) {
+    for (let i = 0; i < t_btIncsAr.length; i++) {
       t_btIncsTcSec.push([t_btIncsAr[i],
         []
       ]);
@@ -367,9 +367,9 @@ function singleTempo(tempo, instNum, startTime, endTime, btIncsAr) {
       t_incCtr.push(0);
     }
   }
-  for (var i = 0; i < t_durMS; i++) {
-    var t_tcSec = (i / 1000.0) + startTime; //timecode in seconds
-    for (var j = 0; j < t_btIncsAr.length; j++) {
+  for (let i = 0; i < t_durMS; i++) {
+    let t_tcSec = (i / 1000.0) + startTime; //timecode in seconds
+    for (let j = 0; j < t_btIncsAr.length; j++) {
       if (t_btIncsAr[j] == 1) {
         t_incCtr[j] = floorByStep(t_btsFloat, t_btIncsAr[j]) - t_numIncs[j];
         if (t_incCtr[j] == 0) {
@@ -411,8 +411,8 @@ function singleTempo(tempo, instNum, startTime, endTime, btIncsAr) {
 // FUNCTION: singleTempoGenerator_numBeats ------------------------------------------- //
 function singleTempoGenerator_numBeats(tempo, instNum, startTime, numBeats, a_btIncAr) {
 
-  var t_dur = beats2seconds(tempo, numBeats);
-  var t_endtime = startTime + t_dur;
+  let t_dur = beats2seconds(tempo, numBeats);
+  let t_endtime = startTime + t_dur;
   singleTempo(tempo, instNum, startTime, t_endtime, a_btIncAr);
   return t_endtime;
 }
@@ -427,17 +427,20 @@ function constrain(num, min, max) {
   const parsed = parseInt(num)
   return Math.min(Math.max(parsed, MIN), MAX)
 }
+function clamp(val, min, max) {
+    return Math.min(Math.max(min, +val), max);
+}
 // GET AND PARCE VALUES FROM URL --------------------------------------
 function getUrlArgs() {
-  var args = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+  let args = {};
+  let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
     args[key] = value;
   });
   return args;
 }
 // <editor-fold>       <<<< MAKE BUTTON >>>> --------------------- //
 function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
-  var btn = document.createElement("BUTTON");
+  let btn = document.createElement("BUTTON");
   btn.className = 'btn btn-1';
   btn.id = id;
   btn.innerText = label;
@@ -454,14 +457,14 @@ function mkButton(canvas, id, w, h, top, left, label, fontSize, action) {
 
 // <editor-fold>       <<<< MAKE JSPANEL >>>> --------------------- //
 function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowresize, a_contentOverflow) {
-  var onwindowresize = a_onwindowresize || false;
-  var headerSize = a_headerSize || 'xs';
-  var contentOverflow = a_contentOverflow || 'hidden';
-  var tpanel;
-  var posString = posArr[0];
-  var offsetX = posArr[1];
-  var offsetY = posArr[2];
-  var autoposition = posArr[3];
+  let onwindowresize = a_onwindowresize || false;
+  let headerSize = a_headerSize || 'xs';
+  let contentOverflow = a_contentOverflow || 'hidden';
+  let tpanel;
+  let posString = posArr[0];
+  let offsetX = posArr[1];
+  let offsetY = posArr[2];
+  let autoposition = posArr[3];
   jsPanel.create({
     position: {
       my: posString,
@@ -498,7 +501,7 @@ function mkPanel(panelid, canvas, w, h, title, posArr, a_headerSize, a_onwindowr
 
 // <editor-fold>       <<<< MAKE CANVAS DIV >>>> ------------------ //
 function mkCanvasDiv(canvasID, w, h, clr) {
-  var t_div = document.createElement("div");
+  let t_div = document.createElement("div");
   t_div.style.width = w.toString() + "px";
   t_div.style.height = h.toString() + "px";
   t_div.style.background = clr;
@@ -509,7 +512,7 @@ function mkCanvasDiv(canvasID, w, h, clr) {
 
 // <editor-fold>       <<<< MAKE SVG CANVAS >>>> ------------------ //
 function mkSVGcanvas(canvasID, w, h) {
-  var tsvgCanvas = document.createElementNS(SVG_NS, "svg");
+  let tsvgCanvas = document.createElementNS(SVG_NS, "svg");
   tsvgCanvas.setAttributeNS(null, "width", w);
   tsvgCanvas.setAttributeNS(null, "height", h);
   tsvgCanvas.setAttributeNS(null, "id", canvasID);
@@ -520,15 +523,15 @@ function mkSVGcanvas(canvasID, w, h) {
 
 // <editor-fold>       <<<< MAKE CONTROL PANEL >>>> ------------------ //
 function mkCtrlPanel(id, w, h, title, posArr, headerSize) { //posArr=all strings:[ left-top, xOffset, yOffset, autoposition]
-  var panelObj = {};
+  let panelObj = {};
   panelObj['id'] = id;
   panelObj['w'] = w;
   panelObj['h'] = h;
-  var canvasID = id + 'canvas';
-  var canvas = mkCanvasDiv(canvasID, w, h, 'black');
+  let canvasID = id + 'canvas';
+  let canvas = mkCanvasDiv(canvasID, w, h, 'black');
   panelObj['canvas'] = canvas;
-  var panelID = id + 'panel';
-  var panel = mkPanel(panelID, canvas, w, h, title, posArr, headerSize);
+  let panelID = id + 'panel';
+  let panel = mkPanel(panelID, canvas, w, h, title, posArr, headerSize);
   panelObj['panel'] = panel;
   return panelObj;
 }
@@ -536,7 +539,7 @@ function mkCtrlPanel(id, w, h, title, posArr, headerSize) { //posArr=all strings
 
 // <editor-fold>       <<<< MAKE LABEL >>>> --------------------- //
 function mkLabel(canvas, id, top, left, text, fontSize, color) {
-  var lbl = document.createElement("label");
+  let lbl = document.createElement("label");
   lbl.innerHTML = text;
   lbl.style.fontSize = fontSize.toString() + "px";
   lbl.style.color = color;
@@ -549,7 +552,7 @@ function mkLabel(canvas, id, top, left, text, fontSize, color) {
 }
 
 function mkLabel2(canvas, id, forid, w, h, top, left, text, fontSize, color) {
-  var lbl = document.createElement("label");
+  let lbl = document.createElement("label");
   lbl.for = 'playerNum';
   lbl.className = 'input__label input__label--yoshiko';
   lbl.innerHTML = text;
@@ -568,7 +571,7 @@ function mkLabel2(canvas, id, forid, w, h, top, left, text, fontSize, color) {
 
 //<editor-fold>     <<<< INPUT FIELD >>>> ---------- //
 function mkInputField(canvas, id, w, h, top, left, color, fontSize, clickAction, keyupAction) {
-  var inputField = document.createElement("input");
+  let inputField = document.createElement("input");
   inputField.type = 'text';
   inputField.className = 'input__field--yoshiko';
   inputField.id = id;
@@ -589,8 +592,8 @@ function mkInputField(canvas, id, w, h, top, left, color, fontSize, clickAction,
 
 // <editor-fold>       <<<< MAKE MENU >>>> ---------------------- //
 function mkMenu(canvas, id, w, h, top, left, listArray) {
-  var menuDiv = document.createElement("div");
-  var menuDivID = id + 'menuDiv';
+  let menuDiv = document.createElement("div");
+  let menuDivID = id + 'menuDiv';
   menuDiv.id = menuDivID;
   menuDiv.className = 'dropdown-content';
   menuDiv.style.width = w.toString() + "px";
@@ -600,7 +603,7 @@ function mkMenu(canvas, id, w, h, top, left, listArray) {
   canvas.appendChild(menuDiv);
   //listArray = [[listLabel, action]]
   listArray.forEach(function(it, ix) {
-    var tempAtag = document.createElement('a');
+    let tempAtag = document.createElement('a');
     tempAtag.textContent = it[0];
     tempAtag.style.fontFamily = "lato";
     tempAtag.id = id + 'listA' + ix.toString();
@@ -610,10 +613,10 @@ function mkMenu(canvas, id, w, h, top, left, listArray) {
   // Close the dropdown menu if the user clicks outside of it
   window.onclick = function(event) {
     if (!event.target.matches('.btn')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
+      let dropdowns = document.getElementsByClassName("dropdown-content");
+      let i;
       for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
+        let openDropdown = dropdowns[i];
         if (openDropdown.classList.contains('show')) {
           openDropdown.classList.remove('show');
         }
@@ -626,7 +629,7 @@ function mkMenu(canvas, id, w, h, top, left, listArray) {
 
 // <editor-fold>       <<<< MAKE SPAN >>>> --------------------- //
 function mkSpan(canvas, id, w, h, top, left, text, fontSize, color) {
-  var lbl = document.createElement("span");
+  let lbl = document.createElement("span");
   lbl.innerHTML = text;
   lbl.style.fontSize = fontSize.toString() + "px";
   lbl.style.color = color;
@@ -641,12 +644,12 @@ function mkSpan(canvas, id, w, h, top, left, text, fontSize, color) {
 
 
 function mkClockPanel(clockDiv) {
-  var tpanel;
+  let tpanel;
   // Clock Panel
   jsPanel.create({
     position: 'right-top',
     id: "clockPanel",
-    contentSize: "41 20",
+    contentSize: "65 20",
     header: 'auto-show-hide',
     headerControls: {
       minimize: 'remove',
@@ -671,23 +674,23 @@ function mkClockPanel(clockDiv) {
 }
 
 function mkNumbers(size, start) {
-  var t_start = start || 0;
-  var numberArray = [];
-  for (var i = 0; i < size; i++) {
+  let t_start = start || 0;
+  let numberArray = [];
+  for (let i = 0; i < size; i++) {
     numberArray.push(i + t_start);
   }
   return numberArray;
 }
 
 function mkCascadingSet_wTotal(maxAmt, numEvents) {
-  var set = [];
-  var set1 = [];
-  var newMaxAmt = maxAmt;
-  var totalAmt = 0;
-  for (var i = 0; i < numEvents; i++) {
-    var max = newMaxAmt / (numEvents - i);
-    var min = newMaxAmt / 4;
-    var amt = rrand(min, max);
+  let set = [];
+  let set1 = [];
+  let newMaxAmt = maxAmt;
+  let totalAmt = 0;
+  for (let i = 0; i < numEvents; i++) {
+    let max = newMaxAmt / (numEvents - i);
+    let min = newMaxAmt / 4;
+    let amt = rrand(min, max);
     totalAmt += amt;
     set1.push(amt);
     newMaxAmt = newMaxAmt - amt;
@@ -698,12 +701,12 @@ function mkCascadingSet_wTotal(maxAmt, numEvents) {
 }
 
 function mkCascadingSet(maxAmt, numEvents) {
-  var set = [];
-  var newMaxAmt = maxAmt;
-  for (var i = 0; i < numEvents; i++) {
-    var max = newMaxAmt / (numEvents - i);
-    var min = newMaxAmt / 4;
-    var amt = rrand(min, max);
+  let set = [];
+  let newMaxAmt = maxAmt;
+  for (let i = 0; i < numEvents; i++) {
+    let max = newMaxAmt / (numEvents - i);
+    let min = newMaxAmt / 4;
+    let amt = rrand(min, max);
     set.push(amt);
     newMaxAmt = newMaxAmt - amt;
   }
@@ -711,7 +714,7 @@ function mkCascadingSet(maxAmt, numEvents) {
 }
 
 function roundSet(set) {
-  var roundedSet = [];
+  let roundedSet = [];
   set.forEach((item, i) => {
     roundedSet.push(Math.round(item));
   });
@@ -765,8 +768,7 @@ function deepCopyObject(obj){
 
 
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-  var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
-
+  let angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
   return {
     x: centerX + (radius * Math.cos(angleInRadians)),
     y: centerY + (radius * Math.sin(angleInRadians))
@@ -774,25 +776,35 @@ function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
 }
 
 function describeArc(x, y, radius, startAngle, endAngle){
-
-    var start = polarToCartesian(x, y, radius, endAngle);
-    var end = polarToCartesian(x, y, radius, startAngle);
-
-    var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
-
-    var d = [
+    let start = polarToCartesian(x, y, radius, endAngle);
+    let end = polarToCartesian(x, y, radius, startAngle);
+    let arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+    let d = [
         "M", start.x, start.y,
         "A", radius, radius, 0, arcSweep, 0, end.x, end.y,
         // "L", x,y,
         // "L", start.x, start.y
     ].join(" ");
-
     return d;
 }
 
 // document.getElementById("arc1").setAttribute("d", describeArc(200, 400, 100, 0, 220));
 
+function flipCoin(){
+  let result = Math.round(Math.random(1));
+  return result;
+}
 
+function mkPalindromeSet(min,max){
+  let palSet = [];
+  for (let i = 0; i < max; i++) {
+    palSet.push(i);
+  }
+  for (let i = (max - 2); i >= 0; i--) {
+    palSet.push(i);
+  }
+  return palSet;
+}
 
 
 
