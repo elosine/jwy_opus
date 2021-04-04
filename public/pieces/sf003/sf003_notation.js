@@ -393,8 +393,23 @@ function mkNotationObject(ix, w, h, scoreDataObj, placementOrder /*[#, ofTotal]*
   // << ANIMATION VARS ------------ >
   let currRing = 0;
   let cycleCt = 0;
-  let initialRingOrderSet = mkPalindromeSet(0, numRings);
-  initialRingOrderSet.splice(0, 1); //1st ring is already 0
+  // let initialRingOrderSet = mkPalindromeSet(0, numRings);
+  // console.log(ix);
+  // console.log(JSON.stringify(initialRingOrderSet));
+  // initialRingOrderSet.splice(0, 1); //1st ring is already 0
+  //To have a consistant score each time
+  let initialRingOrderSet;
+  switch (ix) {
+    case 0:
+      initialRingOrderSet = [0,1,2,3,2,1,0,1, 0, 2, 3, 0, 1, 2]
+      break;
+    case 1:
+      initialRingOrderSet = [1, 2, 3, 4, 3, 2, 1, 0, 3, 1, 0, 4, 2, 0, 2, 3]
+      break;
+    case 2:
+      initialRingOrderSet = [1,2,3,2,1,0, 3, 2, 1, 0, 2, 1]
+      break;
+  }
   let thisFrame_currDeg = initDeg;
   let previousFrame_moduloDeg = initDeg;
   //</editor-fold> END NOTATION OBJECT - INIT END
